@@ -1,0 +1,27 @@
+{
+   "name": "angular-screenshot",
+   "version": "0.1.0",
+   "authors": [
+      "weihanchen"
+   ],
+   "description": "Angular screenshot in directive for screen capture.",
+   "main": [
+      "dist/angular-screenshot.min.js"
+   ],
+   "keywords": [
+      "screenshot",
+      "svg",
+      "canvas",
+      "angular"
+   ],
+   "license": "MIT",
+   "homepage": "http://weihanchen.github.io/angular-screenshot",
+   "ignore": [
+      "node_modules",
+      "bower_components",
+      "test"
+   ],
+   "dependencies": {
+      "angular": "^1.3"
+   }
+}
