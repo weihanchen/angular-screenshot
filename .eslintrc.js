@@ -34,6 +34,7 @@ module.exports = {
       "prefer-const": "warn",
       "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
       "angular/no-service-method": "off",
-      "angular/window-service": "off"
+      "angular/window-service": "off",
+      "angular/log": "off"
    }
 };
