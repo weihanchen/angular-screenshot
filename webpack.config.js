@@ -80,6 +80,9 @@ module.exports = {
         new copyWebpackPlugin([
             { from: 'node_modules/angular/angular.min.js', to: '../examples/js/plugins' },
             { from: 'node_modules/jquery/dist/jquery.min.js', to: '../examples/js/plugins' },
+            { from: 'node_modules/bootstrap/dist/css/bootstrap.min.css', to: '../examples/css/plugins'},
+            { from: 'node_modules/bootstrap/dist/js/bootstrap.min.js', to: '../examples/js/plugins'},
+            { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts'},
             { from: 'build/angular-screenshot.min.js', to: '../examples/js/plugins' },
             { from: 'build/angular-screenshot.js', to: '../examples/js/plugins' }
         ])

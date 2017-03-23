@@ -1,21 +1,24 @@
 import * as angular from 'angular';
+import domcapture from './utils/dom-capture';
 
 const screenshot = () => {
    const screenshotController = function($scope, $element) {
       const self = this;
-      const watchParameter = () => self.parent;
-      const watchListener = (newVal) => {
-         if (newVal) {
-             console.log($element.parent());
-             console.log(angular.element(self.parent));
-         }
+      const doClick = () => {
+         const element = self.parent ? angular.element(self.parent) : $element.parent();
+         console.log(element);
+         domcapture.getCanvas(element[0])
+          .then(canvas => {
+            console.log(canvas);
+            angular.element('#render').append(canvas);
+          });
       };
-      $scope.$watch(watchParameter, watchListener);
+      $element.bind('click', doClick);
    };
    return {
       restrict: 'AE',
       scope: {
-         parent: '@'
+         parent: '=screenshot'
       },
       controller: ['$scope', '$element', screenshotController],
       controllerAs: 'screenshotCtrl',

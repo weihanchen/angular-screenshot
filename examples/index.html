@@ -4,19 +4,19 @@
 <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="css/plugins/bootstrap.min.css" />
     <script src="js/plugins/jquery.min.js"></script>
     <script src="js/plugins/angular.min.js"></script>
+    <script src="js/plugins/bootstrap.min.js"></script>
     <script src="js/controllers/app.js"></script>
     <script src="js/plugins/angular-screenshot.js"></script>
 </head>
 
-<body ng-controller="appController as appCtrl">
-    <div id="root">
-        <screenshot parent="{{'#root'}}">
-
-        </screenshot>
+<body ng-controller="AppController as appCtrl">
+    <div class="well" id="root">
+          <button class="btn" screenshot="'#root'">...</button>
     </div>
-
+   <div id="render"></div>
 </body>
 
 </html>

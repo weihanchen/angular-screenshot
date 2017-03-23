@@ -1,7 +1,7 @@
 'use strict';
 (function() {
    angular.module('app', ['angular-screenshot'])
-      .controller('appController', [appController]);
+      .controller('AppController', [appController]);
 
    function appController() {
       var self = this;

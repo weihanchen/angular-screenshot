@@ -6,10 +6,11 @@ module.exports = {
    },
    "extends": ["eslint:recommended", "angular"],
    "globals": {
-      "process": true,
-      "describe": true,
       "beforeEach": true,
+      "describe": true,
+      "global": true,
       "inject": true,
+      "process": true,
       "window": true,
       "Timeline": true,
       "__dirname": true,
@@ -29,12 +30,14 @@ module.exports = {
          "always"
       ],
       "no-console": "off",
-      "no-var": "warn",
       "no-unreachable": "off",
       "prefer-const": "warn",
       "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
       "angular/no-service-method": "off",
+      "angular/controll-name": "off",
       "angular/window-service": "off",
-      "angular/log": "off"
+      "angular/log": "off",
+      "angular/document-service": "off",
+      "angular/definedundefined": "off"
    }
 };
