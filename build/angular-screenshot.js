@@ -97,6 +97,7 @@
 	         var template = '<button ng-click="screenshotCtrl.download()">Download</button>';
 	         var toolbox = $compile(template)($scope);
 	         document.body.appendChild(toolbox[0]);
+	         console.log(canvas.offsetTop + rect.startY + rect.h + 5);
 	         toolbox.offset({
 	            top: canvas.offsetTop + rect.startY + rect.h + 5,
 	            left: canvas.offsetLeft + rect.startX
