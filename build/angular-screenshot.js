@@ -56,112 +56,119 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	var screenshot = function screenshot() {
-	   var screenshotController = function screenshotController($scope, $element, $compile) {
-	      var colors = {
-	         gray: '#898b89',
-	         lightGray: '#e6e3e3'
-	      },
-	          hightLevelZindex = {
-	         top: 1,
-	         second: 0
-	      },
-	          toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
-	          self = this;
-	      var cancel = function cancel($event) {
-	         self.showToolbox = false;
-	         $event.stopPropagation();
-	      };
-	      var download = function download($event) {
-	         console.log('download');
-	         $event.stopPropagation();
-	      };
+	      var screenshotController = function screenshotController($scope, $element, $compile) {
+	            var colors = {
+	                  gray: '#898b89',
+	                  lightGray: '#e6e3e3'
+	            },
+	                hightLevelZindex = {
+	                  top: 1,
+	                  second: 0
+	            },
+	                toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+	                self = this;
+	            var cancel = function cancel() {
+	                  _utils.domprocess.remove(self.toolboxElement);
+	                  _utils.domprocess.clearCanvasRect(self.interactiveCanvas);
+	            };
+	            var download = function download($event) {
+	                  console.log('download');
+	                  $event.stopPropagation();
+	            };
 
-	      var findMaxZindex = function findMaxZindex() {
-	         var zMax = 0;
-	         angular.element('body *').each(function () {
-	            var zIndex = angular.element(this).css('zIndex');
-	            if (zIndex > zMax) {
-	               zMax = zIndex;
-	            }
-	         });
-	         return zMax;
-	      };
+	            var findMaxZindex = function findMaxZindex() {
+	                  var zMax = 0;
+	                  angular.element('body *').each(function () {
+	                        var zIndex = angular.element(this).css('zIndex');
+	                        if (zIndex > zMax) {
+	                              zMax = zIndex;
+	                        }
+	                  });
+	                  return zMax;
+	            };
 
-	      var setHightLevelZindex = function setHightLevelZindex() {
-	         var maxZindex = findMaxZindex();
-	         hightLevelZindex.second = maxZindex + 1;
-	         hightLevelZindex.top = hightLevelZindex.second + 1;
-	      };
+	            var getTemplate = function getTemplate() {
+	                  return self.templete ? self.template : toolboxTemplate;
+	            };
+	            var getTemplateScope = function getTemplateScope() {
+	                  return self.templateScope ? self.templateScope : $scope;
+	            };
 
-	      var interactiveCanvasListener = function interactiveCanvasListener(canvas, rect) {
-	         self.rect = rect;
-	         var template = '<div><button ng-click="screenshotCtrl.download()">Download</button></div>';
-	         var toolbox = $compile(template)($scope);
-	         document.body.appendChild(toolbox[0]);
-	         var top = canvas.offsetTop + rect.startY + rect.h + 5;
-	         var left = canvas.offsetLeft + rect.startX;
-	         toolbox.offset({
-	            top: top + 'px',
-	            left: left + 'px'
-	         });
-	         toolbox.css('zIndex', hightLevelZindex.top);
-	         toolbox.css({
-	            'position': 'absolute'
-	         });
-	      };
+	            var setHightLevelZindex = function setHightLevelZindex() {
+	                  var maxZindex = findMaxZindex();
+	                  hightLevelZindex.second = maxZindex + 1;
+	                  hightLevelZindex.top = hightLevelZindex.second + 1;
+	            };
+	            var canvasMousedownListener = function canvasMousedownListener() {
+	                  _utils.domprocess.remove(self.toolboxElement);
+	            };
 
-	      var closeScreenshot = function closeScreenshot() {
-	         if (self.interactiveCanvas) self.interactiveCanvas.remove();
-	         if (self.toolboxElement) self.toolboxElement.remove();
-	      };
+	            var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
+	                  if (rect.w != 0 && rect.h != 0) {
+	                        self.rect = rect;
+	                        var toolbox = $compile(getTemplate())(getTemplateScope());
+	                        var toolboxElement = toolbox[0];
+	                        var top = canvas.offsetTop + rect.startY + rect.h + 5;
+	                        var left = canvas.offsetLeft + rect.startX;
+	                        _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (toolboxElement) {
+	                              return self.toolboxElement = toolboxElement;
+	                        });
+	                  }
+	            };
 
-	      var openScreenshot = function openScreenshot() {
-	         var elements = self.parent ? angular.element(self.parent) : $element;
-	         var element = elements[0];
-	         var width = element.offsetWidth;
-	         var height = element.offsetHeight;
-	         var left = element.offsetLeft;
-	         var top = element.offsetTop;
-	         setHightLevelZindex();
+	            var closeScreenshot = function closeScreenshot() {
+	                  _utils.domprocess.remove(self.interactiveCanvas);
+	                  _utils.domprocess.remove(self.toolboxElement);
+	            };
 
-	         _utils.domprocess.createCanvas(width, height).then(function (canvas) {
-	            return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
-	         }).then(_utils.domprocess.appendToBody).then(function (canvas) {
-	            return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, interactiveCanvasListener);
-	         }).then(function (canvas) {
-	            return self.interactiveCanvas = canvas;
-	         });
-	         //  domcapture.getCanvas(element)
-	         //   .then(canvas => {
-	         //     angular.element('#render').append(canvas);
-	         //   });
+	            var openScreenshot = function openScreenshot() {
+	                  var elements = self.parent ? angular.element(self.parent) : $element;
+	                  var element = elements[0];
+	                  var width = element.offsetWidth;
+	                  var height = element.offsetHeight;
+	                  var left = element.offsetLeft;
+	                  var top = element.offsetTop;
+	                  setHightLevelZindex();
+
+	                  _utils.domprocess.createCanvas(width, height).then(function (canvas) {
+	                        return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
+	                  }).then(_utils.domprocess.appendToBody).then(function (canvas) {
+	                        return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener);
+	                  }).then(function (canvas) {
+	                        return self.interactiveCanvas = canvas;
+	                  });
+
+	                  //  domcapture.getCanvas(element)
+	                  //   .then(canvas => {
+	                  //     angular.element('#render').append(canvas);
+	                  //   });
+	            };
+	            self.cancel = cancel;
+	            self.download = download;
+	            self.interactiveCanvas;
+	            self.toolboxElement;
+	            $scope.$watch(function () {
+	                  return self.isOpen;
+	            }, function (newVal) {
+	                  if (newVal === true) {
+	                        openScreenshot();
+	                  } else if (newVal === false) {
+	                        closeScreenshot();
+	                  }
+	            });
 	      };
-	      self.cancel = cancel;
-	      self.download = download;
-	      self.interactiveCanvas;
-	      self.toolboxElement;
-	      $scope.$watch(function () {
-	         return self.isOpen;
-	      }, function (newVal) {
-	         if (newVal === true) {
-	            openScreenshot();
-	         } else if (newVal === false) {
-	            closeScreenshot();
-	         }
-	      });
-	   };
-	   return {
-	      restrict: 'AE',
-	      scope: {
-	         template: '=?',
-	         templateScope: '=?',
-	         parent: '=',
-	         isOpen: '='
-	      },
-	      controller: ['$scope', '$element', '$compile', screenshotController],
-	      controllerAs: 'screenshotCtrl',
-	      bindToController: true
-	   };
+	      return {
+	            restrict: 'AE',
+	            scope: {
+	                  template: '=?',
+	                  templateScope: '=?',
+	                  parent: '=',
+	                  isOpen: '='
+	            },
+	            controller: ['$scope', '$element', '$compile', screenshotController],
+	            controllerAs: 'screenshotCtrl',
+	            bindToController: true
+	      };
 	};
 	/**
 	 * @ngdoc directive
@@ -308,9 +315,14 @@
 	Object.defineProperty(exports, "__esModule", {
 	   value: true
 	});
-	var appendToBody = function appendToBody(canvas) {
-	   document.body.appendChild(canvas);
-	   return canvas;
+	var appendToBody = function appendToBody(element) {
+	   document.body.appendChild(element);
+	   return element;
+	};
+
+	var clearCanvasRect = function clearCanvasRect(canvas) {
+	   var context = canvas.getContext('2d');
+	   context.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
 	var createCanvas = function createCanvas(width, height) {
@@ -320,7 +332,7 @@
 	   return Promise.resolve(canvas);
 	};
 
-	var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, listener) {
+	var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener) {
 	   var context = canvas.getContext('2d'),
 	       rect = {
 	      startX: 0,
@@ -337,8 +349,10 @@
 	   };
 
 	   var mousedown = function mousedown(e) {
+	      context.clearRect(0, 0, canvas.width, canvas.height);
 	      rect.startX = e.pageX - canvas.offsetLeft;
 	      rect.startY = e.pageY - canvas.offsetTop;
+	      mousedownListener(rect);
 	      rect.w = 0;
 	      rect.h = 0;
 	      dragging = true;
@@ -355,14 +369,16 @@
 
 	   var mouseup = function mouseup() {
 	      dragging = false;
-	      if (rect.w != 0 && rect.h != 0) {
-	         listener(canvas, rect);
-	      }
+	      mouseupListener(canvas, rect);
 	   };
 	   canvas.addEventListener('mousedown', mousedown, false);
 	   canvas.addEventListener('mouseup', mouseup, false);
 	   canvas.addEventListener('mousemove', mousemove, false);
 	   return Promise.resolve(canvas);
+	};
+
+	var remove = function remove(element) {
+	   if (element) element.remove();
 	};
 
 	var setCanvasStyle = function setCanvasStyle(canvas, left, top, background, zIndex) {
@@ -373,17 +389,28 @@
 	   canvas.style.background = background;
 	   canvas.style.zIndex = zIndex;
 	   canvas.style.opacity = 0.5;
-	   return canvas;
+	   return Promise.resolve(canvas);
 	};
 
-	var canvasprocess = {
+	var setToolboxStyle = function setToolboxStyle(toolboxElement, left, top, zIndex) {
+	   toolboxElement.style.position = 'absolute';
+	   toolboxElement.style.left = left + 'px';
+	   toolboxElement.style.top = top + 'px';
+	   toolboxElement.style.zIndex = zIndex;
+	   return Promise.resolve(toolboxElement);
+	};
+
+	var domprocess = {
 	   appendToBody: appendToBody,
+	   clearCanvasRect: clearCanvasRect,
 	   createCanvas: createCanvas,
 	   listenInteractiveCanvas: listenInteractiveCanvas,
-	   setCanvasStyle: setCanvasStyle
+	   remove: remove,
+	   setCanvasStyle: setCanvasStyle,
+	   setToolboxStyle: setToolboxStyle
 	};
 
-	exports.default = canvasprocess;
+	exports.default = domprocess;
 
 /***/ }
 /******/ ]);

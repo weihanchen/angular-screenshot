@@ -1,7 +1,12 @@
 'use strice';
-const appendToBody = (canvas) => {
-   document.body.appendChild(canvas);
-   return canvas;
+const appendToBody = (element) => {
+   document.body.appendChild(element);
+   return element;
+};
+
+const clearCanvasRect = (canvas) => {
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 const createCanvas = (width, height) => {
@@ -11,7 +16,7 @@ const createCanvas = (width, height) => {
    return Promise.resolve(canvas);
 };
 
-const listenInteractiveCanvas = (canvas, rectBackground, listener) => {
+const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, mousedownListener) => {
    const context = canvas.getContext('2d'),
       rect = {
          startX: 0,
@@ -28,8 +33,10 @@ const listenInteractiveCanvas = (canvas, rectBackground, listener) => {
    };
 
    const mousedown = (e) => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
       rect.startX = e.pageX - canvas.offsetLeft;
       rect.startY = e.pageY - canvas.offsetTop;
+      mousedownListener(rect);
       rect.w = 0;
       rect.h = 0;
       dragging = true;
@@ -46,14 +53,16 @@ const listenInteractiveCanvas = (canvas, rectBackground, listener) => {
 
    const mouseup = () => {
       dragging = false;
-      if (rect.w != 0 && rect.h != 0) {
-         listener(canvas, rect);
-      }
+      mouseupListener(canvas, rect);
    };
    canvas.addEventListener('mousedown', mousedown, false);
    canvas.addEventListener('mouseup', mouseup, false);
    canvas.addEventListener('mousemove', mousemove, false);
    return Promise.resolve(canvas);
+};
+
+const remove = (element) => {
+   if (element) element.remove();
 };
 
 const setCanvasStyle = (canvas, left, top, background, zIndex) => {
@@ -64,14 +73,25 @@ const setCanvasStyle = (canvas, left, top, background, zIndex) => {
    canvas.style.background = background;
    canvas.style.zIndex = zIndex;
    canvas.style.opacity = 0.5;
-   return canvas;
+   return Promise.resolve(canvas);
 };
 
-const canvasprocess = {
+const setToolboxStyle = (toolboxElement, left, top, zIndex) => {
+   toolboxElement.style.position = 'absolute';
+   toolboxElement.style.left = left + 'px';
+   toolboxElement.style.top = top + 'px';
+   toolboxElement.style.zIndex = zIndex;
+   return Promise.resolve(toolboxElement);
+};
+
+const domprocess = {
    appendToBody,
+   clearCanvasRect,
    createCanvas,
    listenInteractiveCanvas,
-   setCanvasStyle
+   remove,
+   setCanvasStyle,
+   setToolboxStyle
 };
 
-export default canvasprocess;
+export default domprocess;
