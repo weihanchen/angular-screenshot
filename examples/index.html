@@ -15,7 +15,7 @@
 
 <body ng-controller="AppController as appCtrl">
     <div class="well">
-
+      
     </div>
     <button class="btn btn-success" ng-click="appCtrl.openScreenshot()">
         ...
@@ -23,7 +23,9 @@
     <p></p>
     <div class="well" id="root" style="height: 30em;">
         <screenshot parent="'#root'" is-open="appCtrl.isOpenScreenshot"></screenshot>
-
+        <button class="btn btn-primary">我是測試一</button>
+        <button class="btn btn-danger">我是測試二</button>
+        <button class="btn btn-warning">我是測試三</button>
     </div>
     <div id="render"></div>
 </body>

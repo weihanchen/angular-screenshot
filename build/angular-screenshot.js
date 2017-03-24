@@ -57,6 +57,8 @@
 
 	var screenshot = function screenshot() {
 	   var screenshotController = function screenshotController($scope, $element, $compile) {
+	      var _this = this;
+
 	      var colors = { gray: '#898b89', lightGray: '#e6e3e3' },
 	          hightLevelZindex = {
 	         top: 1,
@@ -70,8 +72,8 @@
 	      };
 	      var download = function download() {
 	         var element = getElement();
-	         _utils.domcapture.getCanvas(element).then(function (canvas) {
-	            angular.element('#render').append(canvas);
+	         _utils.domcapture.getCanvasImage(element).then(function (image) {
+	            return _utils.domprocess.downloadImage(image, element.offsetWidth, element.offsetHeight, _this.rect.startX, _this.rect.startY, _this.rect.w, _this.rect.h);
 	         });
 	      };
 
@@ -291,6 +293,11 @@
 	   });
 	};
 
+	var getCanvasImage = function getCanvasImage(element) {
+	   var cloneNode = element.cloneNode(true); //deep clone
+	   return Promise.resolve(cloneNode).then(addStylesheets).then(getSvgUrl).then(getImage);
+	};
+
 	var objectToArray = function objectToArray(obj) {
 	   return Object.keys(obj).map(function (key) {
 	      return obj[key];
@@ -298,7 +305,8 @@
 	};
 
 	var domcapture = {
-	   getCanvas: getCanvas
+	   getCanvas: getCanvas,
+	   getCanvasImage: getCanvasImage
 	};
 	exports.default = domcapture;
 
@@ -309,100 +317,116 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	   value: true
 	});
 	var appendToBody = function appendToBody(element) {
-	    document.body.appendChild(element);
-	    return element;
+	   document.body.appendChild(element);
+	   return element;
 	};
 
 	var clearCanvasRect = function clearCanvasRect(canvas) {
-	    var context = canvas.getContext('2d');
-	    context.clearRect(0, 0, canvas.width, canvas.height);
+	   var context = canvas.getContext('2d');
+	   context.clearRect(0, 0, canvas.width, canvas.height);
+	};
+
+	var downloadImage = function downloadImage(image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) {
+	   return createCanvas(clipWidth, clipHeight).then(function (canvas) {
+	      var context = canvas.getContext('2d');
+	      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight);
+	      return canvas.toDataURL('image/png');
+	   }).then(function (downloadUrl) {
+	      var downloadLink = document.createElement('a');
+	      downloadLink.href = downloadUrl;
+	      downloadLink.download = 'screenshot.png';
+	      downloadLink.target = '_blank';
+	      downloadLink.click();
+	      downloadLink.remove();
+	   });
 	};
 
 	var createCanvas = function createCanvas(width, height) {
-	    var canvas = document.createElement('canvas');
-	    canvas.width = width;
-	    canvas.height = height;
-	    return Promise.resolve(canvas);
+	   var canvas = document.createElement('canvas');
+	   canvas.width = width;
+	   canvas.height = height;
+	   return Promise.resolve(canvas);
 	};
 
 	var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener) {
-	    var context = canvas.getContext('2d'),
-	        rect = {
-	        startX: 0,
-	        startY: 0,
-	        w: 0,
-	        h: 0
-	    };
-	    var dragging = false;
+	   var context = canvas.getContext('2d'),
+	       rect = {
+	      startX: 0,
+	      startY: 0,
+	      w: 0,
+	      h: 0
+	   };
+	   var dragging = false;
 
-	    var draw = function draw() {
-	        context.fillStyle = rectBackground;
-	        context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-	    };
+	   var draw = function draw() {
+	      context.fillStyle = rectBackground;
+	      context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+	   };
 
-	    var mousedown = function mousedown(e) {
-	        context.clearRect(0, 0, canvas.width, canvas.height);
-	        rect.startX = e.pageX - canvas.offsetLeft;
-	        rect.startY = e.pageY - canvas.offsetTop;
-	        mousedownListener(rect);
-	        rect.w = 0;
-	        rect.h = 0;
-	        dragging = true;
-	    };
+	   var mousedown = function mousedown(e) {
+	      context.clearRect(0, 0, canvas.width, canvas.height);
+	      rect.startX = e.pageX - canvas.offsetLeft;
+	      rect.startY = e.pageY - canvas.offsetTop;
+	      mousedownListener(rect);
+	      rect.w = 0;
+	      rect.h = 0;
+	      dragging = true;
+	   };
 
-	    var mousemove = function mousemove(e) {
-	        if (dragging) {
-	            rect.w = e.pageX - canvas.offsetLeft - rect.startX;
-	            rect.h = e.pageY - canvas.offsetTop - rect.startY;
-	            context.clearRect(0, 0, canvas.width, canvas.height);
-	            draw();
-	        }
-	    };
+	   var mousemove = function mousemove(e) {
+	      if (dragging) {
+	         rect.w = e.pageX - canvas.offsetLeft - rect.startX;
+	         rect.h = e.pageY - canvas.offsetTop - rect.startY;
+	         context.clearRect(0, 0, canvas.width, canvas.height);
+	         draw();
+	      }
+	   };
 
-	    var mouseup = function mouseup() {
-	        dragging = false;
-	        mouseupListener(canvas, rect);
-	    };
-	    canvas.addEventListener('mousedown', mousedown, false);
-	    canvas.addEventListener('mouseup', mouseup, false);
-	    canvas.addEventListener('mousemove', mousemove, false);
-	    return Promise.resolve(canvas);
+	   var mouseup = function mouseup() {
+	      dragging = false;
+	      mouseupListener(canvas, rect);
+	   };
+	   canvas.addEventListener('mousedown', mousedown, false);
+	   canvas.addEventListener('mouseup', mouseup, false);
+	   canvas.addEventListener('mousemove', mousemove, false);
+	   return Promise.resolve(canvas);
 	};
 
 	var remove = function remove(element) {
-	    if (element) element.remove();
+	   if (element) element.remove();
 	};
 
 	var setCanvasStyle = function setCanvasStyle(canvas, left, top, background, zIndex) {
-	    canvas.style.cursor = 'crosshair';
-	    canvas.style.position = 'absolute';
-	    canvas.style.left = left + 'px';
-	    canvas.style.top = top + 'px';
-	    canvas.style.background = background;
-	    canvas.style.zIndex = zIndex;
-	    canvas.style.opacity = 0.5;
-	    return Promise.resolve(canvas);
+	   canvas.style.cursor = 'crosshair';
+	   canvas.style.position = 'absolute';
+	   canvas.style.left = left + 'px';
+	   canvas.style.top = top + 'px';
+	   canvas.style.background = background;
+	   canvas.style.zIndex = zIndex;
+	   canvas.style.opacity = 0.5;
+	   return Promise.resolve(canvas);
 	};
 
 	var setToolboxStyle = function setToolboxStyle(toolboxElement, left, top, zIndex) {
-	    toolboxElement.style.position = 'absolute';
-	    toolboxElement.style.left = left + 'px';
-	    toolboxElement.style.top = top + 'px';
-	    toolboxElement.style.zIndex = zIndex;
-	    return Promise.resolve(toolboxElement);
+	   toolboxElement.style.position = 'absolute';
+	   toolboxElement.style.left = left + 'px';
+	   toolboxElement.style.top = top + 'px';
+	   toolboxElement.style.zIndex = zIndex;
+	   return Promise.resolve(toolboxElement);
 	};
 
 	var domprocess = {
-	    appendToBody: appendToBody,
-	    clearCanvasRect: clearCanvasRect,
-	    createCanvas: createCanvas,
-	    listenInteractiveCanvas: listenInteractiveCanvas,
-	    remove: remove,
-	    setCanvasStyle: setCanvasStyle,
-	    setToolboxStyle: setToolboxStyle
+	   appendToBody: appendToBody,
+	   clearCanvasRect: clearCanvasRect,
+	   createCanvas: createCanvas,
+	   downloadImage: downloadImage,
+	   listenInteractiveCanvas: listenInteractiveCanvas,
+	   remove: remove,
+	   setCanvasStyle: setCanvasStyle,
+	   setToolboxStyle: setToolboxStyle
 	};
 
 	exports.default = domprocess;

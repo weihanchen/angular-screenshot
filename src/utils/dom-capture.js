@@ -59,9 +59,18 @@ const getCanvas = (element) => {
       });
 };
 
+const getCanvasImage = (element) => {
+   const cloneNode = element.cloneNode(true); //deep clone
+   return Promise.resolve(cloneNode)
+      .then(addStylesheets)
+      .then(getSvgUrl)
+      .then(getImage);
+};
+
 const objectToArray = (obj) => Object.keys(obj).map(key => obj[key]);
 
 const domcapture = {
-   getCanvas
+   getCanvas,
+   getCanvasImage
 };
 export default domcapture;
