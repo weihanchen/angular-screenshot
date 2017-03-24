@@ -25,9 +25,9 @@ const getMatchedStyleText = () => {
    if (!sheetsObj) return Promise.resolve('');
    const sheetsArr = objectToArray(sheetsObj);
    const result = sheetsArr.reduce((sum, sheet) => {
-     const rules = objectToArray(sheet.rules || sheet.cssRules);
-     sum.push(...rules.map(rule => rule.cssText));
-     return sum;
+      const rules = objectToArray(sheet.rules || sheet.cssRules);
+      sum.push(...rules.map(rule => rule.cssText));
+      return sum;
    }, []).filter(result => result).join('');
    return Promise.resolve(result);
 };

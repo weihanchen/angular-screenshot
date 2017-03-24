@@ -25,6 +25,10 @@ module.exports = {
          "error",
          "windows"
       ],
+      "indent": [
+         "error",
+         3
+      ],
       "semi": [
          "error",
          "always"

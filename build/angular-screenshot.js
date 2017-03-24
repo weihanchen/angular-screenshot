@@ -56,119 +56,116 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	var screenshot = function screenshot() {
-	      var screenshotController = function screenshotController($scope, $element, $compile) {
-	            var colors = {
-	                  gray: '#898b89',
-	                  lightGray: '#e6e3e3'
-	            },
-	                hightLevelZindex = {
-	                  top: 1,
-	                  second: 0
-	            },
-	                toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
-	                self = this;
-	            var cancel = function cancel() {
-	                  _utils.domprocess.remove(self.toolboxElement);
-	                  _utils.domprocess.clearCanvasRect(self.interactiveCanvas);
-	            };
-	            var download = function download($event) {
-	                  console.log('download');
-	                  $event.stopPropagation();
-	            };
+	   var screenshotController = function screenshotController($scope, $element, $compile) {
+	      var colors = { gray: '#898b89', lightGray: '#e6e3e3' },
+	          hightLevelZindex = {
+	         top: 1,
+	         second: 0
+	      },
+	          toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+	          self = this;
+	      var cancel = function cancel() {
+	         _utils.domprocess.remove(self.toolboxElement);
+	         _utils.domprocess.clearCanvasRect(self.interactiveCanvas);
+	      };
+	      var download = function download() {
+	         var element = getElement();
+	         _utils.domcapture.getCanvas(element).then(function (canvas) {
+	            angular.element('#render').append(canvas);
+	         });
+	      };
 
-	            var findMaxZindex = function findMaxZindex() {
-	                  var zMax = 0;
-	                  angular.element('body *').each(function () {
-	                        var zIndex = angular.element(this).css('zIndex');
-	                        if (zIndex > zMax) {
-	                              zMax = zIndex;
-	                        }
-	                  });
-	                  return zMax;
-	            };
+	      var findMaxZindex = function findMaxZindex() {
+	         var zMax = 0;
+	         angular.element('body *').each(function () {
+	            var zIndex = angular.element(this).css('zIndex');
+	            if (zIndex > zMax) {
+	               zMax = zIndex;
+	            }
+	         });
+	         return zMax;
+	      };
 
-	            var getTemplate = function getTemplate() {
-	                  return self.templete ? self.template : toolboxTemplate;
-	            };
-	            var getTemplateScope = function getTemplateScope() {
-	                  return self.templateScope ? self.templateScope : $scope;
-	            };
+	      var getElement = function getElement() {
+	         return self.parent ? angular.element(self.parent)[0] : $element[0];
+	      };
+	      var getTemplate = function getTemplate() {
+	         return self.templete ? self.template : toolboxTemplate;
+	      };
+	      var getTemplateScope = function getTemplateScope() {
+	         return self.templateScope ? self.templateScope : $scope;
+	      };
 
-	            var setHightLevelZindex = function setHightLevelZindex() {
-	                  var maxZindex = findMaxZindex();
-	                  hightLevelZindex.second = maxZindex + 1;
-	                  hightLevelZindex.top = hightLevelZindex.second + 1;
-	            };
-	            var canvasMousedownListener = function canvasMousedownListener() {
-	                  _utils.domprocess.remove(self.toolboxElement);
-	            };
+	      var setHightLevelZindex = function setHightLevelZindex() {
+	         var maxZindex = findMaxZindex();
+	         hightLevelZindex.second = maxZindex + 1;
+	         hightLevelZindex.top = hightLevelZindex.second + 1;
+	      };
+	      var canvasMousedownListener = function canvasMousedownListener() {
+	         _utils.domprocess.remove(self.toolboxElement);
+	      };
 
-	            var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
-	                  if (rect.w != 0 && rect.h != 0) {
-	                        self.rect = rect;
-	                        var toolbox = $compile(getTemplate())(getTemplateScope());
-	                        var toolboxElement = toolbox[0];
-	                        var top = canvas.offsetTop + rect.startY + rect.h + 5;
-	                        var left = canvas.offsetLeft + rect.startX;
-	                        _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (toolboxElement) {
-	                              return self.toolboxElement = toolboxElement;
-	                        });
-	                  }
-	            };
-
-	            var closeScreenshot = function closeScreenshot() {
-	                  _utils.domprocess.remove(self.interactiveCanvas);
-	                  _utils.domprocess.remove(self.toolboxElement);
-	            };
-
-	            var openScreenshot = function openScreenshot() {
-	                  var elements = self.parent ? angular.element(self.parent) : $element;
-	                  var element = elements[0];
-	                  var width = element.offsetWidth;
-	                  var height = element.offsetHeight;
-	                  var left = element.offsetLeft;
-	                  var top = element.offsetTop;
-	                  setHightLevelZindex();
-
-	                  _utils.domprocess.createCanvas(width, height).then(function (canvas) {
-	                        return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
-	                  }).then(_utils.domprocess.appendToBody).then(function (canvas) {
-	                        return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener);
-	                  }).then(function (canvas) {
-	                        return self.interactiveCanvas = canvas;
-	                  });
-
-	                  //  domcapture.getCanvas(element)
-	                  //   .then(canvas => {
-	                  //     angular.element('#render').append(canvas);
-	                  //   });
-	            };
-	            self.cancel = cancel;
-	            self.download = download;
-	            self.interactiveCanvas;
-	            self.toolboxElement;
-	            $scope.$watch(function () {
-	                  return self.isOpen;
-	            }, function (newVal) {
-	                  if (newVal === true) {
-	                        openScreenshot();
-	                  } else if (newVal === false) {
-	                        closeScreenshot();
-	                  }
+	      var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
+	         if (rect.w != 0 && rect.h != 0) {
+	            self.rect = rect;
+	            var toolbox = $compile(getTemplate())(getTemplateScope());
+	            var toolboxElement = toolbox[0];
+	            var top = canvas.offsetTop + rect.startY + rect.h + 5;
+	            var left = canvas.offsetLeft + rect.startX;
+	            _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (toolboxElement) {
+	               return self.toolboxElement = toolboxElement;
 	            });
+	         }
 	      };
-	      return {
-	            restrict: 'AE',
-	            scope: {
-	                  template: '=?',
-	                  templateScope: '=?',
-	                  parent: '=',
-	                  isOpen: '='
-	            },
-	            controller: ['$scope', '$element', '$compile', screenshotController],
-	            controllerAs: 'screenshotCtrl',
-	            bindToController: true
+
+	      var closeScreenshot = function closeScreenshot() {
+	         _utils.domprocess.remove(self.interactiveCanvas);
+	         _utils.domprocess.remove(self.toolboxElement);
 	      };
+
+	      var openScreenshot = function openScreenshot() {
+	         var element = getElement();
+	         var width = element.offsetWidth;
+	         var height = element.offsetHeight;
+	         var left = element.offsetLeft;
+	         var top = element.offsetTop;
+	         setHightLevelZindex();
+
+	         _utils.domprocess.createCanvas(width, height).then(function (canvas) {
+	            return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
+	         }).then(_utils.domprocess.appendToBody).then(function (canvas) {
+	            return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener);
+	         }).then(function (canvas) {
+	            return self.interactiveCanvas = canvas;
+	         });
+	      };
+	      self.cancel = cancel;
+	      self.download = download;
+	      self.interactiveCanvas;
+	      self.rect = {};
+	      self.toolboxElement;
+	      $scope.$watch(function () {
+	         return self.isOpen;
+	      }, function (newVal) {
+	         if (newVal === true) {
+	            openScreenshot();
+	         } else if (newVal === false) {
+	            closeScreenshot();
+	         }
+	      });
+	   };
+	   return {
+	      restrict: 'AE',
+	      scope: {
+	         template: '=?',
+	         templateScope: '=?',
+	         parent: '=',
+	         isOpen: '='
+	      },
+	      controller: ['$scope', '$element', '$compile', screenshotController],
+	      controllerAs: 'screenshotCtrl',
+	      bindToController: true
+	   };
 	};
 	/**
 	 * @ngdoc directive
@@ -310,104 +307,102 @@
 /***/ function(module, exports) {
 
 	'use strict';
-	'use strice';
 
 	Object.defineProperty(exports, "__esModule", {
-	   value: true
+	    value: true
 	});
 	var appendToBody = function appendToBody(element) {
-	   document.body.appendChild(element);
-	   return element;
+	    document.body.appendChild(element);
+	    return element;
 	};
 
 	var clearCanvasRect = function clearCanvasRect(canvas) {
-	   var context = canvas.getContext('2d');
-	   context.clearRect(0, 0, canvas.width, canvas.height);
+	    var context = canvas.getContext('2d');
+	    context.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
 	var createCanvas = function createCanvas(width, height) {
-	   var canvas = document.createElement('canvas');
-	   canvas.width = width;
-	   canvas.height = height;
-	   return Promise.resolve(canvas);
+	    var canvas = document.createElement('canvas');
+	    canvas.width = width;
+	    canvas.height = height;
+	    return Promise.resolve(canvas);
 	};
 
 	var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener) {
-	   var context = canvas.getContext('2d'),
-	       rect = {
-	      startX: 0,
-	      startY: 0,
-	      w: 0,
-	      h: 0
-	   };
-	   var dragging = false;
+	    var context = canvas.getContext('2d'),
+	        rect = {
+	        startX: 0,
+	        startY: 0,
+	        w: 0,
+	        h: 0
+	    };
+	    var dragging = false;
 
-	   var draw = function draw() {
-	      context.fillStyle = rectBackground;
-	      context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-	      // context.stroke();
-	   };
+	    var draw = function draw() {
+	        context.fillStyle = rectBackground;
+	        context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+	    };
 
-	   var mousedown = function mousedown(e) {
-	      context.clearRect(0, 0, canvas.width, canvas.height);
-	      rect.startX = e.pageX - canvas.offsetLeft;
-	      rect.startY = e.pageY - canvas.offsetTop;
-	      mousedownListener(rect);
-	      rect.w = 0;
-	      rect.h = 0;
-	      dragging = true;
-	   };
+	    var mousedown = function mousedown(e) {
+	        context.clearRect(0, 0, canvas.width, canvas.height);
+	        rect.startX = e.pageX - canvas.offsetLeft;
+	        rect.startY = e.pageY - canvas.offsetTop;
+	        mousedownListener(rect);
+	        rect.w = 0;
+	        rect.h = 0;
+	        dragging = true;
+	    };
 
-	   var mousemove = function mousemove(e) {
-	      if (dragging) {
-	         rect.w = e.pageX - canvas.offsetLeft - rect.startX;
-	         rect.h = e.pageY - canvas.offsetTop - rect.startY;
-	         context.clearRect(0, 0, canvas.width, canvas.height);
-	         draw();
-	      }
-	   };
+	    var mousemove = function mousemove(e) {
+	        if (dragging) {
+	            rect.w = e.pageX - canvas.offsetLeft - rect.startX;
+	            rect.h = e.pageY - canvas.offsetTop - rect.startY;
+	            context.clearRect(0, 0, canvas.width, canvas.height);
+	            draw();
+	        }
+	    };
 
-	   var mouseup = function mouseup() {
-	      dragging = false;
-	      mouseupListener(canvas, rect);
-	   };
-	   canvas.addEventListener('mousedown', mousedown, false);
-	   canvas.addEventListener('mouseup', mouseup, false);
-	   canvas.addEventListener('mousemove', mousemove, false);
-	   return Promise.resolve(canvas);
+	    var mouseup = function mouseup() {
+	        dragging = false;
+	        mouseupListener(canvas, rect);
+	    };
+	    canvas.addEventListener('mousedown', mousedown, false);
+	    canvas.addEventListener('mouseup', mouseup, false);
+	    canvas.addEventListener('mousemove', mousemove, false);
+	    return Promise.resolve(canvas);
 	};
 
 	var remove = function remove(element) {
-	   if (element) element.remove();
+	    if (element) element.remove();
 	};
 
 	var setCanvasStyle = function setCanvasStyle(canvas, left, top, background, zIndex) {
-	   canvas.style.cursor = 'crosshair';
-	   canvas.style.position = 'absolute';
-	   canvas.style.left = left + 'px';
-	   canvas.style.top = top + 'px';
-	   canvas.style.background = background;
-	   canvas.style.zIndex = zIndex;
-	   canvas.style.opacity = 0.5;
-	   return Promise.resolve(canvas);
+	    canvas.style.cursor = 'crosshair';
+	    canvas.style.position = 'absolute';
+	    canvas.style.left = left + 'px';
+	    canvas.style.top = top + 'px';
+	    canvas.style.background = background;
+	    canvas.style.zIndex = zIndex;
+	    canvas.style.opacity = 0.5;
+	    return Promise.resolve(canvas);
 	};
 
 	var setToolboxStyle = function setToolboxStyle(toolboxElement, left, top, zIndex) {
-	   toolboxElement.style.position = 'absolute';
-	   toolboxElement.style.left = left + 'px';
-	   toolboxElement.style.top = top + 'px';
-	   toolboxElement.style.zIndex = zIndex;
-	   return Promise.resolve(toolboxElement);
+	    toolboxElement.style.position = 'absolute';
+	    toolboxElement.style.left = left + 'px';
+	    toolboxElement.style.top = top + 'px';
+	    toolboxElement.style.zIndex = zIndex;
+	    return Promise.resolve(toolboxElement);
 	};
 
 	var domprocess = {
-	   appendToBody: appendToBody,
-	   clearCanvasRect: clearCanvasRect,
-	   createCanvas: createCanvas,
-	   listenInteractiveCanvas: listenInteractiveCanvas,
-	   remove: remove,
-	   setCanvasStyle: setCanvasStyle,
-	   setToolboxStyle: setToolboxStyle
+	    appendToBody: appendToBody,
+	    clearCanvasRect: clearCanvasRect,
+	    createCanvas: createCanvas,
+	    listenInteractiveCanvas: listenInteractiveCanvas,
+	    remove: remove,
+	    setCanvasStyle: setCanvasStyle,
+	    setToolboxStyle: setToolboxStyle
 	};
 
 	exports.default = domprocess;

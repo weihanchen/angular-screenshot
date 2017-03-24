@@ -1,5 +1,5 @@
 'use strict';
-(function() {
+(function () {
    angular.module('app', ['angular-screenshot'])
       .controller('AppController', [appController]);
 
@@ -10,6 +10,5 @@
       function openScreenshot() {
          self.isOpenScreenshot = !self.isOpenScreenshot;
       }
-      
    }
 })();
