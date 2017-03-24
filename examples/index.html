@@ -13,10 +13,18 @@
 </head>
 
 <body ng-controller="AppController as appCtrl">
-    <div class="well" id="root">
-          <button class="btn" screenshot="'#root'">...</button>
+    <div class="well">
+
     </div>
-   <div id="render"></div>
+    <button class="btn btn-success" ng-click="appCtrl.openScreenshot()">
+        ...
+    </button>
+    <p></p>
+    <div class="well" id="root">
+        <screenshot parent="'#root'" is-open="appCtrl.isOpenScreenshot"></screenshot>
+
+    </div>
+    <div id="render"></div>
 </body>
 
 </html>

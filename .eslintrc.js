@@ -38,6 +38,7 @@ module.exports = {
       "angular/window-service": "off",
       "angular/log": "off",
       "angular/document-service": "off",
-      "angular/definedundefined": "off"
+      "angular/definedundefined": "off",
+      "angular/controller-as-vm": "off"
    }
 };

@@ -1,5 +1,5 @@
 'use strict';
-// const DOMURL = window.URL || window.webkitURL || window;
+const xmlsSource = 'http://www.w3.org/2000/svg';
 
 
 const addStylesheets = (node) => getMatchedStyleText(node)
@@ -20,10 +20,9 @@ const getImage = (url) => new Promise((resolve, reject) => {
    image.src = url;
 });
 
-const getMatchedStyleText = (node) => {
+const getMatchedStyleText = () => {
    const sheetsObj = document.styleSheets;
    if (!sheetsObj) return Promise.resolve('');
-   node.matches = node.matches || node.webkitMatchesSelector || node.mozMatchesSelector || node.msMatchesSelector || node.oMatchesSelector;
    const sheetsArr = objectToArray(sheetsObj);
    const result = sheetsArr.reduce((sum, sheet) => {
      const rules = objectToArray(sheet.rules || sheet.cssRules);
@@ -39,7 +38,7 @@ const getSvgUrl = (node) => Promise.resolve(node)
       return new XMLSerializer().serializeToString(node);
    })
    .then(xhtml => `<foreignObject x='0' y='0' width='100%' height='100%'>${xhtml}</foreignObject>`)
-   .then(foreignObjectStr => `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>${foreignObjectStr}</svg>`)
+   .then(foreignObjectStr => `<svg xmlns='${xmlsSource}' width='100%' height='100%'>${foreignObjectStr}</svg>`)
    .then(svgContent => `data:image/svg+xml;charset=utf-8,${svgContent}`);
 
 
