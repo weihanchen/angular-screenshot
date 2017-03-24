@@ -1,12 +1,12 @@
 import domcapture from './dom-capture';
-import canvasprocess from './canvas-process';
+import domprocess from './dom-process';
 
 export {
    domcapture,
-   canvasprocess
+   domprocess
 };
 
 export default {
    domcapture,
-   canvasprocess
+   domprocess
 };

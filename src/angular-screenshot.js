@@ -1,7 +1,7 @@
 import * as angular from 'angular';
 
 import {
-   canvasprocess
+   domprocess
 } from './utils';
 
 const screenshot = () => {
@@ -14,6 +14,7 @@ const screenshot = () => {
             top: 1,
             second: 0
          },
+         toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
          self = this;
       const cancel = ($event) => {
          self.showToolbox = false;
@@ -58,7 +59,12 @@ const screenshot = () => {
          });
       };
 
-      const start = () => {
+      const closeScreenshot = () => {
+           if (self.interactiveCanvas) self.interactiveCanvas.remove();
+           if (self.toolboxElement) self.toolboxElement.remove();  
+      };
+
+      const openScreenshot = () => {
          const elements = self.parent ? angular.element(self.parent) : $element;
          const element = elements[0];
          const width = element.offsetWidth;
@@ -67,10 +73,10 @@ const screenshot = () => {
          const top = element.offsetTop;
          setHightLevelZindex();
 
-         canvasprocess.createCanvas(width, height)
-            .then(canvas => canvasprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second))
-            .then(canvasprocess.appendToBody)
-            .then(canvas => canvasprocess.listenInteractiveCanvas(canvas, colors.lightGray, interactiveCanvasListener))
+         domprocess.createCanvas(width, height)
+            .then(canvas => domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second))
+            .then(domprocess.appendToBody)
+            .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, interactiveCanvasListener))
             .then(canvas => self.interactiveCanvas = canvas);
          //  domcapture.getCanvas(element)
          //   .then(canvas => {
@@ -80,19 +86,20 @@ const screenshot = () => {
       self.cancel = cancel;
       self.download = download;
       self.interactiveCanvas;
-      self.showToolbox = false;
+      self.toolboxElement;
       $scope.$watch(() => self.isOpen, (newVal) => {
          if (newVal === true) {
-            start();
-         } else if (self.interactiveCanvas) {
-            self.interactiveCanvas.remove();
-            self.showToolbox = false;
+            openScreenshot();
+         } else if (newVal === false){
+            closeScreenshot();
          }
       });
    };
    return {
       restrict: 'AE',
       scope: {
+         template: '=?',
+         templateScope: '=?',
          parent: '=',
          isOpen: '='
       },
@@ -107,10 +114,10 @@ const screenshot = () => {
  * @description
  * Capture dom setion with indicate element
  * 
- * @param {string=} [template=<div><button ng-click="download()">Download me</button></div>] custom template for captured toolbox.
+ * @param {string=} [template=<div><button ng-click="download()">Download</button></div>] custom template for captured toolbox.
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
- * @param {string=} [parent=#root] Use parent element with capture section.
- * @param {boolean=} [isOpen=true] Flag indicating that open the capture canvas.
+ * @param {string=} [parent=element.parent()] Use parent element with capture section.
+ * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
  */
 
 angular.module('angular-screenshot', [])

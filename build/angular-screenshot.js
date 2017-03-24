@@ -65,6 +65,7 @@
 	         top: 1,
 	         second: 0
 	      },
+	          toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
 	          self = this;
 	      var cancel = function cancel($event) {
 	         self.showToolbox = false;
@@ -109,7 +110,12 @@
 	         });
 	      };
 
-	      var start = function start() {
+	      var closeScreenshot = function closeScreenshot() {
+	         if (self.interactiveCanvas) self.interactiveCanvas.remove();
+	         if (self.toolboxElement) self.toolboxElement.remove();
+	      };
+
+	      var openScreenshot = function openScreenshot() {
 	         var elements = self.parent ? angular.element(self.parent) : $element;
 	         var element = elements[0];
 	         var width = element.offsetWidth;
@@ -118,10 +124,10 @@
 	         var top = element.offsetTop;
 	         setHightLevelZindex();
 
-	         _utils.canvasprocess.createCanvas(width, height).then(function (canvas) {
-	            return _utils.canvasprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
-	         }).then(_utils.canvasprocess.appendToBody).then(function (canvas) {
-	            return _utils.canvasprocess.listenInteractiveCanvas(canvas, colors.lightGray, interactiveCanvasListener);
+	         _utils.domprocess.createCanvas(width, height).then(function (canvas) {
+	            return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
+	         }).then(_utils.domprocess.appendToBody).then(function (canvas) {
+	            return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, interactiveCanvasListener);
 	         }).then(function (canvas) {
 	            return self.interactiveCanvas = canvas;
 	         });
@@ -133,21 +139,22 @@
 	      self.cancel = cancel;
 	      self.download = download;
 	      self.interactiveCanvas;
-	      self.showToolbox = false;
+	      self.toolboxElement;
 	      $scope.$watch(function () {
 	         return self.isOpen;
 	      }, function (newVal) {
 	         if (newVal === true) {
-	            start();
-	         } else if (self.interactiveCanvas) {
-	            self.interactiveCanvas.remove();
-	            self.showToolbox = false;
+	            openScreenshot();
+	         } else if (newVal === false) {
+	            closeScreenshot();
 	         }
 	      });
 	   };
 	   return {
 	      restrict: 'AE',
 	      scope: {
+	         template: '=?',
+	         templateScope: '=?',
 	         parent: '=',
 	         isOpen: '='
 	      },
@@ -162,10 +169,10 @@
 	 * @description
 	 * Capture dom setion with indicate element
 	 * 
-	 * @param {string=} [template=<div><button ng-click="download()">Download me</button></div>] custom template for captured toolbox.
+	 * @param {string=} [template=<div><button ng-click="download()">Download</button></div>] custom template for captured toolbox.
 	 * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
-	 * @param {string=} [parent=#root] Use parent element with capture section.
-	 * @param {boolean=} [isOpen=true] Flag indicating that open the capture canvas.
+	 * @param {string=} [parent=element.parent()] Use parent element with capture section.
+	 * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
 	 */
 
 	angular.module('angular-screenshot', []).directive('screenshot', screenshot);
@@ -185,23 +192,23 @@
 	Object.defineProperty(exports, "__esModule", {
 	   value: true
 	});
-	exports.canvasprocess = exports.domcapture = undefined;
+	exports.domprocess = exports.domcapture = undefined;
 
 	var _domCapture = __webpack_require__(3);
 
 	var _domCapture2 = _interopRequireDefault(_domCapture);
 
-	var _canvasProcess = __webpack_require__(4);
+	var _domProcess = __webpack_require__(4);
 
-	var _canvasProcess2 = _interopRequireDefault(_canvasProcess);
+	var _domProcess2 = _interopRequireDefault(_domProcess);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.domcapture = _domCapture2.default;
-	exports.canvasprocess = _canvasProcess2.default;
+	exports.domprocess = _domProcess2.default;
 	exports.default = {
 	   domcapture: _domCapture2.default,
-	   canvasprocess: _canvasProcess2.default
+	   domprocess: _domProcess2.default
 	};
 
 /***/ },
