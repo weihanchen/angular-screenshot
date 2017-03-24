@@ -43,13 +43,14 @@ const screenshot = () => {
 
       const interactiveCanvasListener = (canvas, rect) => {
          self.rect = rect;
-         const template = '<button ng-click="screenshotCtrl.download()">Download</button>';
+         const template = '<div><button ng-click="screenshotCtrl.download()">Download</button></div>';
          const toolbox = $compile(template)($scope);
          document.body.appendChild(toolbox[0]);
-         console.log(canvas.offsetTop + rect.startY + rect.h + 5)
+         const top = canvas.offsetTop + rect.startY + rect.h + 5;
+         const left = canvas.offsetLeft + rect.startX;
          toolbox.offset({
-            top: canvas.offsetTop + rect.startY + rect.h + 5,
-            left: canvas.offsetLeft + rect.startX
+            top: `${top}px`,
+            left: `${left}px`
          });
          toolbox.css('zIndex', hightLevelZindex.top);
          toolbox.css({
@@ -100,6 +101,17 @@ const screenshot = () => {
       bindToController: true
    };
 };
+/**
+ * @ngdoc directive
+ * @name screenshot
+ * @description
+ * Capture dom setion with indicate element
+ * 
+ * @param {string=} [template=<div><button ng-click="download()">Download me</button></div>] custom template for captured toolbox.
+ * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
+ * @param {string=} [parent=#root] Use parent element with capture section.
+ * @param {boolean=} [isOpen=true] Flag indicating that open the capture canvas.
+ */
 
 angular.module('angular-screenshot', [])
    .directive('screenshot', screenshot);

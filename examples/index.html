@@ -10,6 +10,7 @@
     <script src="js/plugins/bootstrap.min.js"></script>
     <script src="js/controllers/app.js"></script>
     <script src="js/plugins/angular-screenshot.js"></script>
+  
 </head>
 
 <body ng-controller="AppController as appCtrl">
@@ -20,7 +21,7 @@
         ...
     </button>
     <p></p>
-    <div class="well" id="root">
+    <div class="well" id="root" style="height: 30em;">
         <screenshot parent="'#root'" is-open="appCtrl.isOpenScreenshot"></screenshot>
 
     </div>

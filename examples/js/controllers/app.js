@@ -10,5 +10,6 @@
       function openScreenshot() {
          self.isOpenScreenshot = !self.isOpenScreenshot;
       }
+      
    }
 })();
