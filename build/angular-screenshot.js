@@ -100,7 +100,7 @@
 	      };
 
 	      var getElement = function getElement() {
-	         return self.parent ? angular.element(self.parent)[0] : $element[0];
+	         return self.parent ? angular.element(self.parent)[0] : $element.children()[0];
 	      };
 	      var getTemplate = function getTemplate() {
 	         return self.templete ? self.template : toolboxTemplate;
@@ -143,6 +143,7 @@
 
 	      var openScreenshot = function openScreenshot() {
 	         var element = getElement();
+	         console.log(element);
 	         var width = element.offsetWidth;
 	         var height = element.offsetHeight;
 	         var left = element.offsetLeft;

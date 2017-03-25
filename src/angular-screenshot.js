@@ -52,7 +52,7 @@ const screenshot = () => {
          return zMax;
       };
 
-      const getElement = () => self.parent ? angular.element(self.parent)[0] : $element[0];
+      const getElement = () => self.parent ? angular.element(self.parent)[0] : $element.children()[0];
       const getTemplate = () => self.templete ? self.template : toolboxTemplate;
       const getTemplateScope = () => self.templateScope ? self.templateScope : $scope;
 
