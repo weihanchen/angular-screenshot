@@ -21,7 +21,7 @@
         ...
     </button>
     <p></p>
-    <screenshot is-open="appCtrl.isOpenScreenshot">
+    <screenshot is-open="appCtrl.isOpenScreenshot" template-scope="appCtrl.$scope" template="'<div><button class=\'btn btn-success\' ng-click=\'appCtrl.download()\'>Download</button></div>'">
         <div class="well" id="root" style="height: 30em;">
 
             <button class="btn btn-primary">我是測試一</button>

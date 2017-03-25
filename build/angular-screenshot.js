@@ -100,10 +100,10 @@
 	      };
 
 	      var getElement = function getElement() {
-	         return self.parent ? angular.element(self.parent)[0] : $element.children()[0];
+	         return self.target ? angular.element(self.target)[0] : $element.children()[0];
 	      };
 	      var getTemplate = function getTemplate() {
-	         return self.templete ? self.template : toolboxTemplate;
+	         return self.template ? self.template : toolboxTemplate;
 	      };
 	      var getTemplateScope = function getTemplateScope() {
 	         return self.templateScope ? self.templateScope : $scope;
@@ -143,7 +143,6 @@
 
 	      var openScreenshot = function openScreenshot() {
 	         var element = getElement();
-	         console.log(element);
 	         var width = element.offsetWidth;
 	         var height = element.offsetHeight;
 	         var left = element.offsetLeft;
@@ -183,7 +182,7 @@
 	      scope: {
 	         template: '=?',
 	         templateScope: '=?',
-	         parent: '=',
+	         target: '=',
 	         isOpen: '=',
 	         api: '=?'
 	      },
@@ -200,7 +199,7 @@
 	 * 
 	 * @param {string=} [template=<div><button ng-click="download()">Download</button></div>] custom template for captured toolbox.
 	 * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
-	 * @param {string=} [parent=element.parent()] Use parent element with capture section.
+	 * @param {string=} [target=element.children()] Use target element with capture section.
 	 * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
 	 * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
 	 */
