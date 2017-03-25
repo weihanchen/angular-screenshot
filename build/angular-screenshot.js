@@ -57,15 +57,25 @@
 
 	var screenshot = function screenshot() {
 	   var screenshotController = function screenshotController($scope, $element, $compile) {
-	      var _this = this;
-
 	      var colors = { gray: '#898b89', lightGray: '#e6e3e3' },
 	          hightLevelZindex = {
 	         top: 1,
 	         second: 0
 	      },
 	          toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+	          toolboxMargin = 5,
 	          self = this;
+	      var calculateToolboxPosition = function calculateToolboxPosition(offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) {
+	         var left = offsetLeft + rect.startX + rect.w;
+	         var top = offsetTop + rect.startY + rect.h;
+	         if (rect.w >= 0) left -= toolboxWidth;
+	         if (rect.h >= 0) top += toolboxMargin;else top = top - toolboxHeight - toolboxMargin;
+	         return {
+	            left: left,
+	            top: top
+	         };
+	      };
+
 	      var cancel = function cancel() {
 	         _utils.domprocess.remove(self.toolboxElement);
 	         _utils.domprocess.clearCanvasRect(self.interactiveCanvas);
@@ -74,7 +84,7 @@
 	      var download = function download() {
 	         var element = getElement();
 	         _utils.domcapture.getCanvas(element).then(_utils.domprocess.canvasToImage).then(function (image) {
-	            return _utils.domprocess.clipImageToCanvas(image, element.offsetWidth, element.offsetHeight, _this.rect.startX, _this.rect.startY, _this.rect.w, _this.rect.h);
+	            return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
 	         }).then(_utils.domprocess.downloadCanvas);
 	      };
 
@@ -110,15 +120,17 @@
 
 	      var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
 	         if (rect.w != 0 && rect.h != 0) {
-	            rect = normalizeRect(rect);
 	            self.rect = rect;
 	            var toolbox = $compile(getTemplate())(getTemplateScope());
 	            var toolboxElement = toolbox[0];
-	            var top = canvas.offsetTop + rect.startY + rect.h + 5;
-	            var left = canvas.offsetLeft + rect.startX;
-	            _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (element) {
-	               element.style.left = left + rect.w - element.offsetWidth + 'px';
-	               console.log(element.style.left);
+	            /**
+	             * toolbox position setting
+	             * because read elememt's width sould indicated postion method, so we set position method first then move location with dom.
+	             */
+	            _utils.domprocess.setToolboxStackStyle(toolboxElement, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (element) {
+	               var position = calculateToolboxPosition(canvas.offsetLeft, canvas.offsetTop, rect, element.offsetWidth, element.offsetHeight);
+	               return _utils.domprocess.setToolboxPositionStyle(element, position.left, position.top);
+	            }).then(function (element) {
 	               self.toolboxElement = element;
 	            });
 	         }
@@ -358,10 +370,10 @@
 	   context.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
-	var clipImageToCanvas = function clipImageToCanvas(image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) {
-	   return createCanvas(clipWidth, clipHeight).then(function (canvas) {
+	var clipImageToCanvas = function clipImageToCanvas(image, clipStartX, clipStartY, clipWidth, clipHeight) {
+	   return createCanvas(Math.abs(clipWidth), Math.abs(clipHeight)).then(function (canvas) {
 	      var context = canvas.getContext('2d');
-	      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, clipWidth, clipHeight);
+	      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, canvas.width, canvas.height);
 	      return canvas;
 	   });
 	};
@@ -443,10 +455,14 @@
 	   return Promise.resolve(canvas);
 	};
 
-	var setToolboxStyle = function setToolboxStyle(toolboxElement, left, top, zIndex) {
-	   toolboxElement.style.position = 'absolute';
+	var setToolboxPositionStyle = function setToolboxPositionStyle(toolboxElement, left, top) {
 	   toolboxElement.style.left = left + 'px';
 	   toolboxElement.style.top = top + 'px';
+	   return Promise.resolve(toolboxElement);
+	};
+
+	var setToolboxStackStyle = function setToolboxStackStyle(toolboxElement, zIndex) {
+	   toolboxElement.style.position = 'absolute';
 	   toolboxElement.style.zIndex = zIndex;
 	   return Promise.resolve(toolboxElement);
 	};
@@ -461,7 +477,8 @@
 	   listenInteractiveCanvas: listenInteractiveCanvas,
 	   remove: remove,
 	   setCanvasStyle: setCanvasStyle,
-	   setToolboxStyle: setToolboxStyle
+	   setToolboxPositionStyle: setToolboxPositionStyle,
+	   setToolboxStackStyle: setToolboxStackStyle
 	};
 
 	exports.default = domprocess;

@@ -19,10 +19,10 @@ const clearCanvasRect = (canvas) => {
    context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
-const clipImageToCanvas = (image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) => createCanvas(clipWidth, clipHeight)
+const clipImageToCanvas = (image, clipStartX, clipStartY, clipWidth, clipHeight) => createCanvas(Math.abs(clipWidth), Math.abs(clipHeight))
    .then(canvas => {
       const context = canvas.getContext('2d');
-      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, clipWidth, clipHeight);
+      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, canvas.width, canvas.height);
       return canvas;
    });
 
@@ -105,10 +105,14 @@ const setCanvasStyle = (canvas, left, top, background, zIndex) => {
    return Promise.resolve(canvas);
 };
 
-const setToolboxStyle = (toolboxElement, left, top, zIndex) => {
-   toolboxElement.style.position = 'absolute';
+const setToolboxPositionStyle = (toolboxElement, left, top) => {
    toolboxElement.style.left = left + 'px';
    toolboxElement.style.top = top + 'px';
+   return Promise.resolve(toolboxElement);
+};
+
+const setToolboxStackStyle = (toolboxElement, zIndex) => {
+   toolboxElement.style.position = 'absolute';
    toolboxElement.style.zIndex = zIndex;
    return Promise.resolve(toolboxElement);
 };
@@ -123,7 +127,8 @@ const domprocess = {
    listenInteractiveCanvas,
    remove,
    setCanvasStyle,
-   setToolboxStyle
+   setToolboxPositionStyle,
+   setToolboxStackStyle
 };
 
 export default domprocess;

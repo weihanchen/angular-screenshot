@@ -14,7 +14,20 @@ const screenshot = () => {
             second: 0
          },
          toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+         toolboxMargin = 5,
          self = this;
+      const calculateToolboxPosition = (offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) => {
+         let left = offsetLeft + rect.startX + rect.w;
+         let top = offsetTop + rect.startY + rect.h;
+         if (rect.w >= 0) left -= toolboxWidth;
+         if (rect.h >= 0) top += toolboxMargin;
+         else top = top -  toolboxHeight - toolboxMargin;
+         return {
+            left,
+            top
+         };
+      };
+
       const cancel = () => {
          domprocess.remove(self.toolboxElement);
          domprocess.clearCanvasRect(self.interactiveCanvas);
@@ -24,7 +37,7 @@ const screenshot = () => {
          const element = getElement();
          domcapture.getCanvas(element)
             .then(domprocess.canvasToImage)
-            .then(image => domprocess.clipImageToCanvas(image, element.offsetWidth, element.offsetHeight, this.rect.startX, this.rect.startY, this.rect.w, this.rect.h))
+            .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
             .then(domprocess.downloadCanvas);
       };
 
@@ -54,17 +67,20 @@ const screenshot = () => {
 
       const canvasMouseupListener = (canvas, rect) => {
          if (rect.w != 0 && rect.h != 0) {
-            rect = normalizeRect(rect);
             self.rect = rect;
             const toolbox = $compile(getTemplate())(getTemplateScope());
             const toolboxElement = toolbox[0];
-            const top = canvas.offsetTop + rect.startY + rect.h + 5;
-            const left = canvas.offsetLeft + rect.startX;
-            domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top)
+            /**
+             * toolbox position setting
+             * because read elememt's width sould indicated postion method, so we set position method first then move location with dom.
+             */
+            domprocess.setToolboxStackStyle(toolboxElement, hightLevelZindex.top)
                .then(domprocess.appendToBody)
                .then(element => {
-                  element.style.left = left + rect.w - element.offsetWidth + 'px';
-                  console.log(element.style.left)
+                  const position = calculateToolboxPosition(canvas.offsetLeft, canvas.offsetTop ,rect, element.offsetWidth, element.offsetHeight);
+                  return domprocess.setToolboxPositionStyle(element, position.left, position.top);
+               })
+               .then(element => {
                   self.toolboxElement = element;
                });
          }
