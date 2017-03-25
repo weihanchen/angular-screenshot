@@ -4,25 +4,33 @@ const appendToBody = (element) => {
    return element;
 };
 
-const clearCanvasRect = (canvas) => {
-   const context = canvas.getContext('2d');
-   context.clearRect(0, 0, canvas.width, canvas.height);
-};
+const canvasToImage = (canvas) => new Promise((resolve, reject) => {
+   const url = canvas.toDataURL('image/png');
+   const image = new Image();
+   image.onload = () => {
+      resolve(image);
+   };
+   image.onerror = reject;
+   image.src = url;
+});
 
-const downloadImage = (image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) => createCanvas(clipWidth, clipHeight)
+const clipImageToCanvas = (image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) => createCanvas(clipWidth, clipHeight)
    .then(canvas => {
       const context = canvas.getContext('2d');
-      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight);
-      return canvas.toDataURL('image/png');
-   })
-   .then(downloadUrl => {
-      const downloadLink = document.createElement('a');
-      downloadLink.href = downloadUrl;
-      downloadLink.download = 'screenshot.png';
-      downloadLink.target = '_blank';
-      downloadLink.click();
-      downloadLink.remove();
+      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, clipWidth, clipHeight);
+      return canvas;
    });
+
+
+const downloadCanvas = (canvas) => {
+   const downloadUrl = canvas.toDataURL('image/png');
+   const downloadLink = document.createElement('a');
+   downloadLink.href = downloadUrl;
+   downloadLink.download = 'screenshot.png';
+   downloadLink.target = '_blank';
+   downloadLink.click();
+   downloadLink.remove();
+};
 
 
 const createCanvas = (width, height) => {
@@ -101,9 +109,10 @@ const setToolboxStyle = (toolboxElement, left, top, zIndex) => {
 
 const domprocess = {
    appendToBody,
-   clearCanvasRect,
+   canvasToImage,
+   clipImageToCanvas,
    createCanvas,
-   downloadImage,
+   downloadCanvas,
    listenInteractiveCanvas,
    remove,
    setCanvasStyle,

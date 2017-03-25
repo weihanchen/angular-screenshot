@@ -21,8 +21,10 @@ const screenshot = () => {
       };
       const download = () => {
          const element = getElement();
-         domcapture.getCanvasImage(element)
-            .then(image => domprocess.downloadImage(image, element.offsetWidth, element.offsetHeight, this.rect.startX, this.rect.startY, this.rect.w, this.rect.h));
+         domcapture.getCanvas(element)
+            .then(domprocess.canvasToImage)
+            .then(image => domprocess.clipImageToCanvas(image, element.offsetWidth, element.offsetHeight, this.rect.startX, this.rect.startY, this.rect.w, this.rect.h))
+            .then(domprocess.downloadCanvas);
       };
 
       const findMaxZindex = () => {

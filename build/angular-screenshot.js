@@ -72,9 +72,9 @@
 	      };
 	      var download = function download() {
 	         var element = getElement();
-	         _utils.domcapture.getCanvasImage(element).then(function (image) {
-	            return _utils.domprocess.downloadImage(image, element.offsetWidth, element.offsetHeight, _this.rect.startX, _this.rect.startY, _this.rect.w, _this.rect.h);
-	         });
+	         _utils.domcapture.getCanvas(element).then(_utils.domprocess.canvasToImage).then(function (image) {
+	            return _utils.domprocess.clipImageToCanvas(image, element.offsetWidth, element.offsetHeight, _this.rect.startX, _this.rect.startY, _this.rect.w, _this.rect.h);
+	         }).then(_utils.domprocess.downloadCanvas);
 	      };
 
 	      var findMaxZindex = function findMaxZindex() {
@@ -324,24 +324,34 @@
 	   return element;
 	};
 
-	var clearCanvasRect = function clearCanvasRect(canvas) {
-	   var context = canvas.getContext('2d');
-	   context.clearRect(0, 0, canvas.width, canvas.height);
+	var canvasToImage = function canvasToImage(canvas) {
+	   return new Promise(function (resolve, reject) {
+	      var url = canvas.toDataURL('image/png');
+	      var image = new Image();
+	      image.onload = function () {
+	         resolve(image);
+	      };
+	      image.onerror = reject;
+	      image.src = url;
+	   });
 	};
 
-	var downloadImage = function downloadImage(image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) {
+	var clipImageToCanvas = function clipImageToCanvas(image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) {
 	   return createCanvas(clipWidth, clipHeight).then(function (canvas) {
 	      var context = canvas.getContext('2d');
-	      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight);
-	      return canvas.toDataURL('image/png');
-	   }).then(function (downloadUrl) {
-	      var downloadLink = document.createElement('a');
-	      downloadLink.href = downloadUrl;
-	      downloadLink.download = 'screenshot.png';
-	      downloadLink.target = '_blank';
-	      downloadLink.click();
-	      downloadLink.remove();
+	      context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, clipWidth, clipHeight);
+	      return canvas;
 	   });
+	};
+
+	var downloadCanvas = function downloadCanvas(canvas) {
+	   var downloadUrl = canvas.toDataURL('image/png');
+	   var downloadLink = document.createElement('a');
+	   downloadLink.href = downloadUrl;
+	   downloadLink.download = 'screenshot.png';
+	   downloadLink.target = '_blank';
+	   downloadLink.click();
+	   downloadLink.remove();
 	};
 
 	var createCanvas = function createCanvas(width, height) {
@@ -420,9 +430,10 @@
 
 	var domprocess = {
 	   appendToBody: appendToBody,
-	   clearCanvasRect: clearCanvasRect,
+	   canvasToImage: canvasToImage,
+	   clipImageToCanvas: clipImageToCanvas,
 	   createCanvas: createCanvas,
-	   downloadImage: downloadImage,
+	   downloadCanvas: downloadCanvas,
 	   listenInteractiveCanvas: listenInteractiveCanvas,
 	   remove: remove,
 	   setCanvasStyle: setCanvasStyle,
