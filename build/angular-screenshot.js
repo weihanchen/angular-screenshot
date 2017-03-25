@@ -89,8 +89,9 @@ var screenshot = function screenshot() {
          top: 1,
          second: 0
       },
-          toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+          toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
           toolboxMargin = 5,
+          defaultFilename = 'screenshot.png',
           self = this;
       var calculateToolboxPosition = function calculateToolboxPosition(offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) {
          var left = offsetLeft + rect.startX + rect.w;
@@ -110,9 +111,12 @@ var screenshot = function screenshot() {
 
       var download = function download() {
          var element = getElement();
+         var filename = self.filename ? self.filename : defaultFilename;
          _utils.domcapture.getCanvas(element).then(_utils.domprocess.canvasToImage).then(function (image) {
             return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
-         }).then(_utils.domprocess.downloadCanvas);
+         }).then(function (canvas) {
+            return _utils.domprocess.downloadCanvas(canvas, filename);
+         });
       };
 
       var findMaxZindex = function findMaxZindex() {
@@ -147,6 +151,7 @@ var screenshot = function screenshot() {
 
       var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
          if (rect.w != 0 && rect.h != 0) {
+            _utils.domprocess.remove(self.toolboxElement);
             self.rect = rect;
             var toolbox = $compile(getTemplate())(getTemplateScope());
             var toolboxElement = toolbox[0];
@@ -214,6 +219,7 @@ var screenshot = function screenshot() {
          templateScope: '=?',
          target: '=',
          isOpen: '=',
+         filename: '=?',
          api: '=?'
       },
       controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
@@ -231,6 +237,7 @@ var screenshot = function screenshot() {
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
+ * @param {string=} [filename=screenshot.png] default filename for download.
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 
@@ -376,11 +383,11 @@ var clipImageToCanvas = function clipImageToCanvas(image, clipStartX, clipStartY
    });
 };
 
-var downloadCanvas = function downloadCanvas(canvas) {
+var downloadCanvas = function downloadCanvas(canvas, filename) {
    var downloadUrl = canvas.toDataURL('image/png');
    var downloadLink = document.createElement('a');
    downloadLink.href = downloadUrl;
-   downloadLink.download = 'screenshot.png';
+   downloadLink.download = filename;
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();

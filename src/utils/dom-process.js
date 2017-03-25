@@ -27,11 +27,11 @@ const clipImageToCanvas = (image, clipStartX, clipStartY, clipWidth, clipHeight)
    });
 
 
-const downloadCanvas = (canvas) => {
+const downloadCanvas = (canvas, filename) => {
    const downloadUrl = canvas.toDataURL('image/png');
    const downloadLink = document.createElement('a');
    downloadLink.href = downloadUrl;
-   downloadLink.download = 'screenshot.png';
+   downloadLink.download = filename;
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();

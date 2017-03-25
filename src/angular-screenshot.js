@@ -13,8 +13,9 @@ const screenshot = () => {
             top: 1,
             second: 0
          },
-         toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+         toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
          toolboxMargin = 5,
+         defaultFilename = 'screenshot.png',
          self = this;
       const calculateToolboxPosition = (offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) => {
          let left = offsetLeft + rect.startX + rect.w;
@@ -35,10 +36,11 @@ const screenshot = () => {
 
       const download = () => {
          const element = getElement();
+         const filename = self.filename ? self.filename : defaultFilename;
          domcapture.getCanvas(element)
             .then(domprocess.canvasToImage)
             .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
-            .then(domprocess.downloadCanvas);
+            .then(canvas => domprocess.downloadCanvas(canvas, filename));
       };
 
       const findMaxZindex = () => {
@@ -67,6 +69,7 @@ const screenshot = () => {
 
       const canvasMouseupListener = (canvas, rect) => {
          if (rect.w != 0 && rect.h != 0) {
+            domprocess.remove(self.toolboxElement);
             self.rect = rect;
             const toolbox = $compile(getTemplate())(getTemplateScope());
             const toolboxElement = toolbox[0];
@@ -131,6 +134,7 @@ const screenshot = () => {
          templateScope: '=?',
          target: '=',
          isOpen: '=',
+         filename: '=?',
          api: '=?'
       },
       controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
@@ -148,6 +152,7 @@ const screenshot = () => {
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
+ * @param {string=} [filename=screenshot.png] default filename for download.
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 

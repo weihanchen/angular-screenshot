@@ -59,9 +59,7 @@ module.exports = {
          { from: 'node_modules/jquery/dist/jquery.min.js', to: '../examples/js/plugins' },
          { from: 'node_modules/bootstrap/dist/css/bootstrap.min.css', to: '../examples/css/plugins' },
          { from: 'node_modules/bootstrap/dist/js/bootstrap.min.js', to: '../examples/js/plugins' },
-         { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts' },
-         { from: `build/${filename}.js`, to: '../examples/js/plugins' },
-         { from: `build/${filename}.css`, to: '../examples/css/plugins' }
+         { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts' }
       ])
    ]
 };
