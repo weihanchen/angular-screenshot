@@ -111,6 +111,10 @@ const screenshot = () => {
       self.interactiveCanvas;
       self.rect = {};
       self.toolboxElement;
+      self.api = {
+         download,
+         cancel
+      };
       $scope.$watch(() => self.isOpen, (newVal) => {
          if (newVal === true) {
             openScreenshot();
@@ -125,7 +129,8 @@ const screenshot = () => {
          template: '=?',
          templateScope: '=?',
          parent: '=',
-         isOpen: '='
+         isOpen: '=',
+         api: '=?'
       },
       controller: ['$scope', '$element', '$compile', screenshotController],
       controllerAs: 'screenshotCtrl',
@@ -142,6 +147,7 @@ const screenshot = () => {
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [parent=element.parent()] Use parent element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
+ * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 
 angular.module('angular-screenshot', [])
