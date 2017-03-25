@@ -239,8 +239,6 @@ var screenshot = function screenshot() {
  * @description
  * Capture dom setion with indicate element
  * 
- * @param {string=} [template=<div><button ng-click="download()">Download</button></div>] custom template for captured toolbox.
- * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
  * @param {object=} [toolboxOptions=

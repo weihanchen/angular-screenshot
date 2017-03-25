@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/plugins/default.css" />
     <link rel="stylesheet" href="css/plugins/bootstrap-material-design.min.css" />
     <link rel="stylesheet" href="css/plugins/ripples.min.css" />
+    <link rel="stylesheet" href="css/plugins/font-awesome.min.css" />
     <script src="js/plugins/jquery.min.js"></script>
     <script src="js/plugins/angular.min.js"></script>
     <script src="js/plugins/bootstrap.min.js"></script>
@@ -27,10 +28,109 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <div class="jumbotron">
-                <h1></h1>
-                <p>...</p>
-                <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+                <h1>Angular screenshot</h1>
+                <p>Angular screenshot is an Angularjs directive for screen capture.</p>
+                <p>
+                    <a class="btn btn-primary btn-raised" href="https://github.com/weihanchen/angular-screenshot" target="_blank"><i class="fa fa-github" aria-hidden="true"></i> View on github</a>
+                    <a class="btn btn-primary btn-raised" href="https://github.com/weihanchen/angular-screenshot/archive/master.zip" target="_blank"><i class="fa fa-cloud-download" aria-hidden="true"></i> Download zip</a>
+                </p>
             </div>
+            <h2>Installation</h2>
+            <hr />
+            Get angular screenshot from bower, npm, or git.
+            <pre>
+                <code class="bash">
+                    $npm install angular-screenshot
+                    $bower install angular-screenshot
+                    $git clone https://github.com/weihanchen/angular-screenshot.git
+                </code>
+            </pre>
+            Add dependencies to the section of your index.html
+            <pre>
+                <code class="html">
+                    &ltmeta charset="utf-8"&gt  <!-- it's important for d3.js -->
+                    &ltlink href="node_modules/angular-screenshot/build/angular-screenshot.min.css" rel="stylesheet" /&gt
+                    &ltscript src="node_modules/angular-screenshot/build/angular-screenshot.min.js"&gt&lt/script&gt
+                </code>
+            </pre>
+            Add angular-screenshot dependency to module:
+            <pre>
+                <code class="javascript">
+                    angular.module("app", ["angular-screenshot"])
+                </code>
+            </pre>
+            <!--options-->
+            <p></p>
+            <h2>Options</h2>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                        <th>Sample</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>target</td>
+                        <td>element.children()</td>
+                        <td>Use target element with capture section.</td>
+                        <td>
+                            &ltscreenshot target="root"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>isOpen</td>
+                        <td>false</td>
+                        <td>Flag indicating that open the capture canvas.</td>
+                        <td>
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>toolboxOptions</td>
+                        <td>
+                           <pre>
+                               <code class="javascript">
+                                    {
+                                "filename": "screenshot.png", 
+                                "cancelText": "Cancel",
+                                "downloadText": "Download",
+                                "template": "&ltdiv class=\"screenshot-toolbox\">&ltbutton ng-click=\"screenshotCtrl.cancel()\"&gtCancel&lt/button&gtbutton ng-click=\"screenshotCtrl.download()\"&gtDownload&lt/button&gt&lt/div>",
+                                "templateScope": "$scope"
+                            }
+                               </code>
+                            </pre>
+                        </td>
+                        <td>toolboxOptions.</td>
+                        <td>
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>api</td>
+                        <td>
+                            <pre>
+                                <code class="javascript">
+                                    {
+                                        "download": download,
+                                        "cancel": cancel
+                                    }
+                                </code>
+                            </pre>
+                        </td>
+                        <td>
+                            Expose api to interactive custom template action.
+                        </td>
+                        <td>
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--examples-->
+            <h2>Examples</h2>
         </div>
     </div>
 

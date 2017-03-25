@@ -45,6 +45,7 @@
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.9.0",
+    "font-awesome": "^4.7.0",
     "generate-json-webpack-plugin": "^0.2.1",
     "highlightjs": "^9.10.0",
     "html-webpack-plugin": "^2.24.1",
