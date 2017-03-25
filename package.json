@@ -37,7 +37,7 @@
     "bootstrap": "^3.3.7",
     "bootstrap-material-design": "^0.5.10",
     "copy-webpack-plugin": "^4.0.1",
-    "copyfiles ": "^1.2.0",
+    "copyfiles": "^1.2.0",
     "css-loader": "^0.23.0",
     "eslint": "^3.17.1",
     "eslint-plugin-angular": "^1.6.2",
