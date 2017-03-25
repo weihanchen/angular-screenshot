@@ -158,18 +158,6 @@
 	         });
 	      };
 
-	      var normalizeRect = function normalizeRect(rect) {
-	         rect = Object.assign({}, rect);
-	         if (rect.w < 0) {
-	            rect.startX = rect.startX + rect.w;
-	            rect.w = Math.abs(rect.w);
-	         }
-	         if (rect.h < 0) {
-	            rect.startY = rect.startY + rect.h;
-	            rect.h = Math.abs(rect.h);
-	         }
-	         return rect;
-	      };
 	      self.cancel = cancel;
 	      self.download = download;
 	      self.interactiveCanvas;
