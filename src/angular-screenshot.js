@@ -13,9 +13,7 @@ const screenshot = () => {
             top: 1,
             second: 0
          },
-         toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
          toolboxMargin = 5,
-         defaultFilename = 'screenshot.png',
          self = this;
       const calculateToolboxPosition = (offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) => {
          let left = offsetLeft + rect.startX + rect.w;
@@ -36,11 +34,10 @@ const screenshot = () => {
 
       const download = () => {
          const element = getElement();
-         const filename = self.filename ? self.filename : defaultFilename;
          domcapture.getCanvas(element)
             .then(domprocess.canvasToImage)
             .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
-            .then(canvas => domprocess.downloadCanvas(canvas, filename));
+            .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
       };
 
       const findMaxZindex = () => {
@@ -55,8 +52,6 @@ const screenshot = () => {
       };
 
       const getElement = () => self.target ? angular.element(self.target)[0] : $element.children()[0];
-      const getTemplate = () => self.template ? self.template : toolboxTemplate;
-      const getTemplateScope = () => self.templateScope ? self.templateScope : $scope;
 
       const setHightLevelZindex = () => {
          const maxZindex = findMaxZindex();
@@ -71,7 +66,8 @@ const screenshot = () => {
          if (rect.w != 0 && rect.h != 0) {
             domprocess.remove(self.toolboxElement);
             self.rect = rect;
-            const toolbox = $compile(getTemplate())(getTemplateScope());
+            const toolbox = $compile(self.template)(self.templateScope);
+            $scope.$apply();
             const toolboxElement = toolbox[0];
             /**
              * toolbox position setting
@@ -114,6 +110,14 @@ const screenshot = () => {
       self.interactiveCanvas;
       self.rect = {};
       self.toolboxElement;
+      self.cancelText = 'Cancel';
+      self.downloadText = 'Download';
+      self.filename = 'screenshot.png';
+      self.template = '<div class="screenshot-toolbox">' +
+         '<button ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' +
+         '<button ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' +
+         '</div>';
+      self.templateScope = $scope;
       $timeout(() => self.api = {
          download: download,
          cancel: cancel
@@ -126,15 +130,22 @@ const screenshot = () => {
             closeScreenshot();
          }
       });
+
+      $scope.$watch(() => self.options, (newVal) => {
+         if (!angular.isObject(newVal)) return;
+         self.cancelText = newVal.cancelText ? newVal.cancelText : self.cancelText;
+         self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
+         self.filename = newVal.filename ? newVal.filename : self.filename;
+         self.template = newVal.template ? newVal.template : self.template;
+         self.templateScope = newVal.templateScope ? newVal.templateScope : self.templateScope;
+      });
    };
    return {
       restrict: 'AE',
       scope: {
-         template: '=?',
-         templateScope: '=?',
          target: '=',
          isOpen: '=',
-         filename: '=?',
+         toolboxOptions: '=?',
          api: '=?'
       },
       controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
@@ -152,7 +163,14 @@ const screenshot = () => {
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
- * @param {string=} [filename=screenshot.png] default filename for download.
+ * @param {object=} [toolboxOptions=
+ * {
+ *    filename: 'screenshot.png', 
+ *    cancelText: 'Cancel',
+ *    downloadText: 'Download',
+ *    template: '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
+ *    templateScope: $scope
+ * }] toolboxOptions
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 

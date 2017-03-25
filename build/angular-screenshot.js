@@ -89,9 +89,7 @@ var screenshot = function screenshot() {
          top: 1,
          second: 0
       },
-          toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
           toolboxMargin = 5,
-          defaultFilename = 'screenshot.png',
           self = this;
       var calculateToolboxPosition = function calculateToolboxPosition(offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) {
          var left = offsetLeft + rect.startX + rect.w;
@@ -111,11 +109,10 @@ var screenshot = function screenshot() {
 
       var download = function download() {
          var element = getElement();
-         var filename = self.filename ? self.filename : defaultFilename;
          _utils.domcapture.getCanvas(element).then(_utils.domprocess.canvasToImage).then(function (image) {
             return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
          }).then(function (canvas) {
-            return _utils.domprocess.downloadCanvas(canvas, filename);
+            return _utils.domprocess.downloadCanvas(canvas, self.filename);
          });
       };
 
@@ -133,12 +130,6 @@ var screenshot = function screenshot() {
       var getElement = function getElement() {
          return self.target ? angular.element(self.target)[0] : $element.children()[0];
       };
-      var getTemplate = function getTemplate() {
-         return self.template ? self.template : toolboxTemplate;
-      };
-      var getTemplateScope = function getTemplateScope() {
-         return self.templateScope ? self.templateScope : $scope;
-      };
 
       var setHightLevelZindex = function setHightLevelZindex() {
          var maxZindex = findMaxZindex();
@@ -153,7 +144,8 @@ var screenshot = function screenshot() {
          if (rect.w != 0 && rect.h != 0) {
             _utils.domprocess.remove(self.toolboxElement);
             self.rect = rect;
-            var toolbox = $compile(getTemplate())(getTemplateScope());
+            var toolbox = $compile(self.template)(self.templateScope);
+            $scope.$apply();
             var toolboxElement = toolbox[0];
             /**
              * toolbox position setting
@@ -195,6 +187,11 @@ var screenshot = function screenshot() {
       self.interactiveCanvas;
       self.rect = {};
       self.toolboxElement;
+      self.cancelText = 'Cancel';
+      self.downloadText = 'Download';
+      self.filename = 'screenshot.png';
+      self.template = '<div class="screenshot-toolbox">' + '<button ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' + '<button ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' + '</div>';
+      self.templateScope = $scope;
       $timeout(function () {
          return self.api = {
             download: download,
@@ -211,15 +208,24 @@ var screenshot = function screenshot() {
             closeScreenshot();
          }
       });
+
+      $scope.$watch(function () {
+         return self.options;
+      }, function (newVal) {
+         if (!angular.isObject(newVal)) return;
+         self.cancelText = newVal.cancelText ? newVal.cancelText : self.cancelText;
+         self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
+         self.filename = newVal.filename ? newVal.filename : self.filename;
+         self.template = newVal.template ? newVal.template : self.template;
+         self.templateScope = newVal.templateScope ? newVal.templateScope : self.templateScope;
+      });
    };
    return {
       restrict: 'AE',
       scope: {
-         template: '=?',
-         templateScope: '=?',
          target: '=',
          isOpen: '=',
-         filename: '=?',
+         toolboxOptions: '=?',
          api: '=?'
       },
       controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
@@ -237,7 +243,14 @@ var screenshot = function screenshot() {
  * @param {string=} [templateScope=$scope] Scope to be passed to custom template - as $scope.
  * @param {string=} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
- * @param {string=} [filename=screenshot.png] default filename for download.
+ * @param {object=} [toolboxOptions=
+ * {
+ *    filename: 'screenshot.png', 
+ *    cancelText: 'Cancel',
+ *    downloadText: 'Download',
+ *    template: '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
+ *    templateScope: $scope
+ * }] toolboxOptions
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 
