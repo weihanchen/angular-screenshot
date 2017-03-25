@@ -4,33 +4,36 @@
 <head>
     <meta charset="utf-8">
     <title></title>
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="css/plugins/bootstrap.min.css" />
     <link rel="stylesheet" href="css/plugins/angular-screenshot.min.css" />
+    <link rel="stylesheet" href="css/plugins/default.css" />
+    <link rel="stylesheet" href="css/plugins/bootstrap-material-design.min.css" />
+    <link rel="stylesheet" href="css/plugins/ripples.min.css" />
     <script src="js/plugins/jquery.min.js"></script>
     <script src="js/plugins/angular.min.js"></script>
     <script src="js/plugins/bootstrap.min.js"></script>
     <script src="js/controllers/app.js"></script>
     <script src="js/plugins/angular-screenshot.min.js"></script>
+    <script src="js/plugins/highlight.pack.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
 </head>
 
 <body ng-controller="AppController as appCtrl">
-    <div class="well">
-
-    </div>
-    <button class="btn btn-success" ng-click="appCtrl.openScreenshot()">
-        ...
-    </button>
-    <p></p>
-    <screenshot is-open="appCtrl.isOpenScreenshot">
-        <div class="well" id="root" style="height: 30em;">
-
-            <button class="btn btn-primary">我是測試一</button>
-            <button class="btn btn-danger">我是測試二</button>
-            <button class="btn btn-warning">我是測試三</button>
-
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="jumbotron">
+                <h1></h1>
+                <p>...</p>
+                <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+            </div>
         </div>
-    </screenshot>
-    <div id="render"></div>
+    </div>
+
 </body>
 
 </html>

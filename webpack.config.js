@@ -59,7 +59,11 @@ module.exports = {
          { from: 'node_modules/jquery/dist/jquery.min.js', to: '../examples/js/plugins' },
          { from: 'node_modules/bootstrap/dist/css/bootstrap.min.css', to: '../examples/css/plugins' },
          { from: 'node_modules/bootstrap/dist/js/bootstrap.min.js', to: '../examples/js/plugins' },
-         { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts' }
+         { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts' },
+         { from: 'node_modules/highlightjs/styles/default.css', to: '../examples/css/plugins'},
+         { from: 'node_modules/highlightjs/highlight.pack.min.js', to: '../examples/js/plugins'},
+         { from: 'node_modules/bootstrap-material-design/dist/css/bootstrap-material-design.min.css', to: '../examples/css/plugins'},
+         { from : 'node_modules/bootstrap-material-design/dist/css/ripples.min.css', to: '../examples/css/plugins'}
       ])
    ]
 };
