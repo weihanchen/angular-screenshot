@@ -190,7 +190,7 @@ var screenshot = function screenshot() {
       self.cancelText = 'Cancel';
       self.downloadText = 'Download';
       self.filename = 'screenshot.png';
-      self.template = '<div class="screenshot-toolbox">' + '<button ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' + '<button ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' + '</div>';
+      self.template = '<div class="screenshot-toolbox">' + '<button class="btn" type="button" ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' + '<button class="btn" type="button" ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' + '</div>';
       self.templateScope = $scope;
       $timeout(function () {
          return self.api = {
