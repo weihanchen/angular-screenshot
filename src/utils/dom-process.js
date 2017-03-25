@@ -1,7 +1,7 @@
 'use strict';
 const appendToBody = (element) => {
    document.body.appendChild(element);
-   return element;
+   return Promise.resolve(element);
 };
 
 const canvasToImage = (canvas) => new Promise((resolve, reject) => {
@@ -13,6 +13,11 @@ const canvasToImage = (canvas) => new Promise((resolve, reject) => {
    image.onerror = reject;
    image.src = url;
 });
+
+const clearCanvasRect = (canvas) => {
+   const context = canvas.getContext('2d');
+   context.clearRect(0, 0, canvas.width, canvas.height);
+};
 
 const clipImageToCanvas = (image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) => createCanvas(clipWidth, clipHeight)
    .then(canvas => {
@@ -30,6 +35,7 @@ const downloadCanvas = (canvas) => {
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();
+   return Promise.resolve(canvas);
 };
 
 
@@ -110,6 +116,7 @@ const setToolboxStyle = (toolboxElement, left, top, zIndex) => {
 const domprocess = {
    appendToBody,
    canvasToImage,
+   clearCanvasRect,
    clipImageToCanvas,
    createCanvas,
    downloadCanvas,

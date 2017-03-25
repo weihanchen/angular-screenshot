@@ -19,6 +19,7 @@ const screenshot = () => {
          domprocess.remove(self.toolboxElement);
          domprocess.clearCanvasRect(self.interactiveCanvas);
       };
+
       const download = () => {
          const element = getElement();
          domcapture.getCanvas(element)
@@ -53,6 +54,7 @@ const screenshot = () => {
 
       const canvasMouseupListener = (canvas, rect) => {
          if (rect.w != 0 && rect.h != 0) {
+            rect = normalizeRect(rect);
             self.rect = rect;
             const toolbox = $compile(getTemplate())(getTemplateScope());
             const toolboxElement = toolbox[0];
@@ -60,7 +62,11 @@ const screenshot = () => {
             const left = canvas.offsetLeft + rect.startX;
             domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top)
                .then(domprocess.appendToBody)
-               .then(toolboxElement => self.toolboxElement = toolboxElement);
+               .then(element => {
+                  element.style.left = left + rect.w - element.offsetWidth + 'px';
+                  console.log(element.style.left)
+                  self.toolboxElement = element;
+               });
          }
       };
 
@@ -82,6 +88,19 @@ const screenshot = () => {
             .then(domprocess.appendToBody)
             .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener))
             .then(canvas => self.interactiveCanvas = canvas);
+      };
+
+      const normalizeRect = (rect) => {
+         rect = Object.assign({}, rect);
+         if (rect.w < 0) {
+            rect.startX = rect.startX + rect.w;
+            rect.w = Math.abs(rect.w);
+         }
+         if (rect.h < 0) {
+            rect.startY = rect.startY + rect.h;
+            rect.h = Math.abs(rect.h);
+         }
+         return rect;
       };
       self.cancel = cancel;
       self.download = download;

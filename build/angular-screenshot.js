@@ -70,6 +70,7 @@
 	         _utils.domprocess.remove(self.toolboxElement);
 	         _utils.domprocess.clearCanvasRect(self.interactiveCanvas);
 	      };
+
 	      var download = function download() {
 	         var element = getElement();
 	         _utils.domcapture.getCanvas(element).then(_utils.domprocess.canvasToImage).then(function (image) {
@@ -109,13 +110,16 @@
 
 	      var canvasMouseupListener = function canvasMouseupListener(canvas, rect) {
 	         if (rect.w != 0 && rect.h != 0) {
+	            rect = normalizeRect(rect);
 	            self.rect = rect;
 	            var toolbox = $compile(getTemplate())(getTemplateScope());
 	            var toolboxElement = toolbox[0];
 	            var top = canvas.offsetTop + rect.startY + rect.h + 5;
 	            var left = canvas.offsetLeft + rect.startX;
-	            _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (toolboxElement) {
-	               return self.toolboxElement = toolboxElement;
+	            _utils.domprocess.setToolboxStyle(toolboxElement, left, top, hightLevelZindex.top).then(_utils.domprocess.appendToBody).then(function (element) {
+	               element.style.left = left + rect.w - element.offsetWidth + 'px';
+	               console.log(element.style.left);
+	               self.toolboxElement = element;
 	            });
 	         }
 	      };
@@ -140,6 +144,19 @@
 	         }).then(function (canvas) {
 	            return self.interactiveCanvas = canvas;
 	         });
+	      };
+
+	      var normalizeRect = function normalizeRect(rect) {
+	         rect = Object.assign({}, rect);
+	         if (rect.w < 0) {
+	            rect.startX = rect.startX + rect.w;
+	            rect.w = Math.abs(rect.w);
+	         }
+	         if (rect.h < 0) {
+	            rect.startY = rect.startY + rect.h;
+	            rect.h = Math.abs(rect.h);
+	         }
+	         return rect;
 	      };
 	      self.cancel = cancel;
 	      self.download = download;
@@ -321,7 +338,7 @@
 	});
 	var appendToBody = function appendToBody(element) {
 	   document.body.appendChild(element);
-	   return element;
+	   return Promise.resolve(element);
 	};
 
 	var canvasToImage = function canvasToImage(canvas) {
@@ -334,6 +351,11 @@
 	      image.onerror = reject;
 	      image.src = url;
 	   });
+	};
+
+	var clearCanvasRect = function clearCanvasRect(canvas) {
+	   var context = canvas.getContext('2d');
+	   context.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
 	var clipImageToCanvas = function clipImageToCanvas(image, canvasWidth, canvasHeight, clipStartX, clipStartY, clipWidth, clipHeight) {
@@ -352,6 +374,7 @@
 	   downloadLink.target = '_blank';
 	   downloadLink.click();
 	   downloadLink.remove();
+	   return Promise.resolve(canvas);
 	};
 
 	var createCanvas = function createCanvas(width, height) {
@@ -431,6 +454,7 @@
 	var domprocess = {
 	   appendToBody: appendToBody,
 	   canvasToImage: canvasToImage,
+	   clearCanvasRect: clearCanvasRect,
 	   clipImageToCanvas: clipImageToCanvas,
 	   createCanvas: createCanvas,
 	   downloadCanvas: downloadCanvas,
