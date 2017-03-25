@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - 6.0.0
+before_script:
+  - npm install
+script:
+  - npm run build
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash scripts/deploy.sh
+branches:
+  only:
+    - master
+notification:
+  email:
+    - ${GITHUB_MAIL}
+  on_success: always
