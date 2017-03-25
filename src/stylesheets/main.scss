@@ -8,15 +8,12 @@
 
 	.btn {
 		 position: relative;
-
 		 padding: 0.2em 0.4em;;
-		
 		 overflow: hidden;
 		 border-width: 0;
 		 outline: none;
 		 border-radius: 0.2em;
 		 box-shadow: 0 0.1em 0.2em $color-darkgray;
-
 		 background-color: $color-lightgray;
 		 color: $color-darkgray;
 		 transition: background-color .3s;
