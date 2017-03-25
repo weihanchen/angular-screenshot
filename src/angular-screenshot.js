@@ -13,7 +13,7 @@ const screenshot = () => {
             top: 1,
             second: 0
          },
-         toolboxTemplate = '<div><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
+         toolboxTemplate = '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.download()">Download</button><button ng-click="screenshotCtrl.cancel()">Cancel</button></div>',
          toolboxMargin = 5,
          self = this;
       const calculateToolboxPosition = (offsetLeft, offsetTop, rect, toolboxWidth, toolboxHeight) => {
