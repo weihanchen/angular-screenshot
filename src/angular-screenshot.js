@@ -131,7 +131,7 @@ const screenshot = () => {
          templateScope: '=?',
          target: '=',
          isOpen: '=',
-         api: '='
+         api: '=?'
       },
       controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
       controllerAs: 'screenshotCtrl',
