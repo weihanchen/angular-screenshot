@@ -56,7 +56,7 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	var screenshot = function screenshot() {
-	   var screenshotController = function screenshotController($scope, $element, $compile) {
+	   var screenshotController = function screenshotController($scope, $element, $compile, $timeout) {
 	      var colors = { gray: '#898b89', lightGray: '#e6e3e3' },
 	          hightLevelZindex = {
 	         top: 1,
@@ -163,10 +163,13 @@
 	      self.interactiveCanvas;
 	      self.rect = {};
 	      self.toolboxElement;
-	      self.api = {
-	         download: download,
-	         cancel: cancel
-	      };
+	      $timeout(function () {
+	         return self.api = {
+	            download: download,
+	            cancel: cancel
+	         };
+	      });
+
 	      $scope.$watch(function () {
 	         return self.isOpen;
 	      }, function (newVal) {
@@ -184,9 +187,9 @@
 	         templateScope: '=?',
 	         target: '=',
 	         isOpen: '=',
-	         api: '=?'
+	         api: '='
 	      },
-	      controller: ['$scope', '$element', '$compile', screenshotController],
+	      controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
 	      controllerAs: 'screenshotCtrl',
 	      bindToController: true
 	   };

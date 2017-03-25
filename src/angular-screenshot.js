@@ -7,7 +7,7 @@ import {
 } from './utils';
 
 const screenshot = () => {
-   const screenshotController = function ($scope, $element, $compile) {
+   const screenshotController = function ($scope, $element, $compile, $timeout) {
       const colors = { gray: '#898b89', lightGray: '#e6e3e3' },
          hightLevelZindex = {
             top: 1,
@@ -21,7 +21,7 @@ const screenshot = () => {
          let top = offsetTop + rect.startY + rect.h;
          if (rect.w >= 0) left -= toolboxWidth;
          if (rect.h >= 0) top += toolboxMargin;
-         else top = top -  toolboxHeight - toolboxMargin;
+         else top = top - toolboxHeight - toolboxMargin;
          return {
             left,
             top
@@ -77,7 +77,7 @@ const screenshot = () => {
             domprocess.setToolboxStackStyle(toolboxElement, hightLevelZindex.top)
                .then(domprocess.appendToBody)
                .then(element => {
-                  const position = calculateToolboxPosition(canvas.offsetLeft, canvas.offsetTop ,rect, element.offsetWidth, element.offsetHeight);
+                  const position = calculateToolboxPosition(canvas.offsetLeft, canvas.offsetTop, rect, element.offsetWidth, element.offsetHeight);
                   return domprocess.setToolboxPositionStyle(element, position.left, position.top);
                })
                .then(element => {
@@ -111,10 +111,11 @@ const screenshot = () => {
       self.interactiveCanvas;
       self.rect = {};
       self.toolboxElement;
-      self.api = {
-         download,
-         cancel
-      };
+      $timeout(() => self.api = {
+         download: download,
+         cancel: cancel
+      });
+
       $scope.$watch(() => self.isOpen, (newVal) => {
          if (newVal === true) {
             openScreenshot();
@@ -130,9 +131,9 @@ const screenshot = () => {
          templateScope: '=?',
          target: '=',
          isOpen: '=',
-         api: '=?'
+         api: '='
       },
-      controller: ['$scope', '$element', '$compile', screenshotController],
+      controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
       controllerAs: 'screenshotCtrl',
       bindToController: true
    };

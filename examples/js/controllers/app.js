@@ -6,6 +6,7 @@
    function appController($scope) {
       var self = this;
       self.$scope = $scope;
+      self.screenshotApi = {};
       self.isOpenScreenshot = false;
       self.openScreenshot = openScreenshot;
       self.download = download;
@@ -14,7 +15,7 @@
       }
 
       function download() {
-          console.log('download');
+         self.screenshotApi.download();
       }
    }
 })();
