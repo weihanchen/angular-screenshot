@@ -64,7 +64,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -74,13 +74,94 @@
 "use strict";
 
 
-var _angular = __webpack_require__(5);
+var _angular = __webpack_require__(8);
 
 var angular = _interopRequireWildcard(_angular);
 
-var _utils = __webpack_require__(4);
+var _directives = __webpack_require__(2);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+angular.module('angular-screenshot', []).directive('screenshot', _directives.screenshot).directive('screenshotToolbox', _directives.screenshotToolbox);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+   value: true
+});
+exports.screenshotToolbox = exports.screenshot = undefined;
+
+var _screenshot = __webpack_require__(4);
+
+var _screenshot2 = _interopRequireDefault(_screenshot);
+
+var _screenshotToolbox = __webpack_require__(3);
+
+var _screenshotToolbox2 = _interopRequireDefault(_screenshotToolbox);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.screenshot = _screenshot2.default;
+exports.screenshotToolbox = _screenshotToolbox2.default;
+exports.default = {
+   screenshot: _screenshot2.default,
+   screenshotToolbox: _screenshotToolbox2.default
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+   value: true
+});
+var screenshotToolbox = function screenshotToolbox() {
+   var linkFn = function linkFn(scope, element, attrs, screenshotCtrl) {
+      var template = element.children().html();
+      screenshotCtrl.setTemplate(template, scope);
+   };
+   return {
+      restruct: 'E',
+      template: '<div class="screenshot-toolbox-custom" ng-transclude></div>',
+      require: '^screenshot',
+      link: linkFn,
+      transclude: true
+   };
+};
+/**
+ * @ngdoc directive
+ * @name screenshot-toolbox
+ * @description
+ * Custom template of screenshot toolbox, connent with screenshot
+*/
+exports.default = screenshotToolbox;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+   value: true
+});
+
+var _utils = __webpack_require__(7);
 
 var screenshot = function screenshot() {
    var screenshotController = function screenshotController($scope, $element, $compile, $timeout) {
@@ -191,7 +272,11 @@ var screenshot = function screenshot() {
             return self.interactiveCanvas = canvas;
          });
       };
-
+      /**
+       * 
+       * @param {string} template - allow screenshot-toolbox directive setting with
+       * @param {string} templateScope - scope of $compile toolbox content
+       */
       var setTemplate = function setTemplate(template, templateScope) {
          self.template = template;
          self.templateScope = templateScope;
@@ -247,20 +332,6 @@ var screenshot = function screenshot() {
       bindToController: true
    };
 };
-
-var screenshotToolbox = function screenshotToolbox() {
-   var linkFn = function linkFn(scope, element, attrs, screenshotCtrl) {
-      var template = element.children().html();
-      screenshotCtrl.setTemplate(template, scope);
-   };
-   return {
-      restruct: 'E',
-      template: '<div class="screenshot-toolbox-custom" ng-transclude></div>',
-      require: '^screenshot',
-      link: linkFn,
-      transclude: true
-   };
-};
 /**
  * @ngdoc directive
  * @name screenshot
@@ -277,17 +348,10 @@ var screenshotToolbox = function screenshotToolbox() {
  * }] toolboxOptions
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
-
-angular.module('angular-screenshot', []).directive('screenshot', screenshot).directive('screenshotToolbox', screenshotToolbox);
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
+exports.default = screenshot;
 
 /***/ }),
-/* 2 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -384,7 +448,7 @@ var domcapture = {
 exports.default = domcapture;
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -536,7 +600,7 @@ var domprocess = {
 exports.default = domprocess;
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -547,11 +611,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.domprocess = exports.domcapture = undefined;
 
-var _domCapture = __webpack_require__(2);
+var _domCapture = __webpack_require__(5);
 
 var _domCapture2 = _interopRequireDefault(_domCapture);
 
-var _domProcess = __webpack_require__(3);
+var _domProcess = __webpack_require__(6);
 
 var _domProcess2 = _interopRequireDefault(_domProcess);
 
@@ -565,13 +629,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = angular;
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(0);
