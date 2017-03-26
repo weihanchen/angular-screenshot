@@ -167,11 +167,12 @@ var screenshot = function screenshot() {
 
       var openScreenshot = function openScreenshot() {
          var element = getElement();
-         var width = element.offsetWidth;
-         var height = element.offsetHeight;
-         console.log(angular.element(element));
-         var left = element.offsetLeft;
-         var top = element.offsetTop;
+         var elements = angular.element(element);
+         var width = elements.outerWidth(true);
+         var height = elements.outerHeight(true);
+         var offset = elements.offset();
+         var left = offset.left;
+         var top = offset.top;
          setHightLevelZindex();
 
          _utils.domprocess.createCanvas(width, height).then(function (canvas) {

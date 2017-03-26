@@ -92,11 +92,12 @@ const screenshot = () => {
 
       const openScreenshot = () => {
          const element = getElement();
-         const width = element.offsetWidth;
-         const height = element.offsetHeight;
-         console.log(angular.element(element));
-         const left = element.offsetLeft;
-         const top = element.offsetTop;
+         const elements = angular.element(element);
+         const width = elements.outerWidth(true);
+         const height = elements.outerHeight(true);
+         const offset = elements.offset();
+         const left = offset.left;
+         const top = offset.top;
          setHightLevelZindex();
 
          domprocess.createCanvas(width, height)
