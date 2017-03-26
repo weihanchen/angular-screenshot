@@ -217,7 +217,7 @@ var screenshot = function screenshot() {
       });
 
       $scope.$watch(function () {
-         return self.options;
+         return self.toolboxOptions;
       }, function (newVal) {
          if (!angular.isObject(newVal)) return;
          self.cancelText = newVal.cancelText ? newVal.cancelText : self.cancelText;
@@ -230,7 +230,7 @@ var screenshot = function screenshot() {
    return {
       restrict: 'AE',
       scope: {
-         target: '=',
+         target: '@',
          isOpen: '=',
          toolboxOptions: '=?',
          api: '=?'
@@ -246,7 +246,7 @@ var screenshot = function screenshot() {
  * @description
  * Capture dom setion with indicate element
  * 
- * @param {string=} [target=element.children()] Use target element with capture section.
+ * @param {string@} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
  * @param {object=} [toolboxOptions=
  * {

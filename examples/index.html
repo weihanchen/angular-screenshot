@@ -162,10 +162,10 @@
                     </div>
                 </screenshot>
             </div>
-            <div class="panel panel-info">
+            <div id="target1" class="panel panel-info">
                 <div class="panel-heading clearfix">
                    <div class="btn-group-sm pull-right">
-                       <button class="btn btn-fab btn-default">
+                       <button class="btn btn-fab btn-default" ng-click="appCtrl.target1Open = !appCtrl.target1Open">
                            <i class="material-icons">crop</i>
                        </button>
                    </div>
@@ -174,7 +174,7 @@
                    </h4>
                 </div>
                 <div class="panel-body">
-
+                    <screenshot target="{{::'#target1'}}" is-open="appCtrl.target1Open" toolbox-options="appCtrl.target1Options"></screenshot>
                 </div>
             </div>
         </div>
