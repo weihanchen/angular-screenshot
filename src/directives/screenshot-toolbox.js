@@ -2,6 +2,7 @@ const screenshotToolbox = () => {
    const linkFn = (scope, element, attrs, screenshotCtrl) => {
       const template = `<div>${element.children().html()}</div>`;
       screenshotCtrl.setTemplate(template, scope);
+      element.remove();
    };
    return {
       restruct: 'E',

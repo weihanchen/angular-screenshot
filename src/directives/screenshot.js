@@ -2,6 +2,7 @@ import {
    domcapture,
    domprocess
 } from '../utils';
+import domtoimage from 'dom-to-image';
 const screenshot = () => {
    const screenshotController = function ($scope, $element, $compile, $timeout) {
       const colors = { gray: '#898b89', lightGray: '#e6e3e3' },
@@ -29,11 +30,19 @@ const screenshot = () => {
       };
 
       const download = () => {
+         self.isOpen = false;
          const element = getElement();
-         domcapture.getCanvas(element)
-            .then(domprocess.canvasToImage)
+         domtoimage.toPng(element)
+            .then(domprocess.dataUrlToImage)
             .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
             .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+         // domcapture.getCanvas(element)
+         //    .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+
+         //    domcapture.getCanvas(element)
+         //       .then(domprocess.canvasToImage)
+         //       .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
+         //       .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
       };
 
       const findMaxZindex = () => {

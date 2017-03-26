@@ -4,15 +4,10 @@ const appendToBody = (element) => {
    return Promise.resolve(element);
 };
 
-const canvasToImage = (canvas) => new Promise((resolve, reject) => {
+const canvasToImage = (canvas) => {
    const url = canvas.toDataURL('image/png');
-   const image = new Image();
-   image.onload = () => {
-      resolve(image);
-   };
-   image.onerror = reject;
-   image.src = url;
-});
+   return dataUrlToImage(url);
+};
 
 const clearCanvasRect = (canvas) => {
    const context = canvas.getContext('2d');
@@ -26,6 +21,14 @@ const clipImageToCanvas = (image, clipStartX, clipStartY, clipWidth, clipHeight)
       return canvas;
    });
 
+const dataUrlToImage = (url) => new Promise((resolve, reject) => {
+   const image = new Image();
+   image.onload = () => {
+      resolve(image);
+   };
+   image.onerror = reject;
+   image.src = url;
+});
 
 const downloadCanvas = (canvas, filename) => {
    const downloadUrl = canvas.toDataURL('image/png');
@@ -130,6 +133,7 @@ const domprocess = {
    clearCanvasRect,
    clipImageToCanvas,
    createCanvas,
+   dataUrlToImage,
    downloadCanvas,
    listenInteractiveCanvas,
    remove,
