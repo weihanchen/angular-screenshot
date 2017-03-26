@@ -169,6 +169,7 @@ var screenshot = function screenshot() {
          var element = getElement();
          var width = element.offsetWidth;
          var height = element.offsetHeight;
+         console.log(angular.element(element));
          var left = element.offsetLeft;
          var top = element.offsetTop;
          setHightLevelZindex();
@@ -300,10 +301,13 @@ var getMatchedStyleText = function getMatchedStyleText() {
    if (!sheetsObj) return Promise.resolve('');
    var sheetsArr = objectToArray(sheetsObj);
    var result = sheetsArr.reduce(function (sum, sheet) {
-      var rules = objectToArray(sheet.rules || sheet.cssRules);
-      sum.push.apply(sum, _toConsumableArray(rules.map(function (rule) {
-         return rule.cssText;
-      })));
+      var rulesObject = sheet.rules || sheet.cssRules;
+      if (rulesObject) {
+         var rules = objectToArray(rulesObject);
+         sum.push.apply(sum, _toConsumableArray(rules.map(function (rule) {
+            return rule.cssText;
+         })));
+      }
       return sum;
    }, []).filter(function (result) {
       return result;

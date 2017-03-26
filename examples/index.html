@@ -17,7 +17,7 @@
     <script src="js/plugins/angular.min.js"></script>
     <script src="js/plugins/bootstrap.min.js"></script>
     <script src="js/controllers/app.js"></script>
-    <script src="js/plugins/angular-screenshot.min.js"></script>
+    <script src="js/plugins/angular-screenshot.js"></script>
     <script src="js/plugins/highlight.pack.min.js"></script>
     <script>
         hljs.initHighlightingOnLoad();
@@ -36,24 +36,23 @@
                 </p>
             </div>
             <h2>Installation</h2>
-            <hr />
-            Get angular screenshot from bower, npm, or git.
+            <hr /> Get angular screenshot from bower, npm, or git.
             <pre>
                 <code class="bash">
                     $npm install angular-screenshot
                     $bower install angular-screenshot
                     $git clone https://github.com/weihanchen/angular-screenshot.git
                 </code>
-            </pre>
-            Add dependencies to the section of your index.html
+            </pre> Add dependencies to the section of your index.html
             <pre>
                 <code class="html">
-                    &ltmeta charset="utf-8"&gt  <!-- it's important for d3.js -->
+                    &ltmeta charset="utf-8"&gt  
                     &ltlink href="node_modules/angular-screenshot/build/angular-screenshot.min.css" rel="stylesheet" /&gt
+                    &ltscript src="node_modules/jquery/dist/jquery.min.js"&gt&lt/script&gt
+                    &ltscript src="node_modules/angular/angular.min.js"&gt&lt/script&gt
                     &ltscript src="node_modules/angular-screenshot/build/angular-screenshot.min.js"&gt&lt/script&gt
                 </code>
-            </pre>
-            Add angular-screenshot dependency to module:
+            </pre> Add angular-screenshot dependency to module:
             <pre>
                 <code class="javascript">
                     angular.module("app", ["angular-screenshot"])
@@ -88,10 +87,10 @@
                             &ltscreenshot target="root" isOpen="appCtrl.isOpen"&gt&ltscreenshot&gt
                         </td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td>toolboxOptions</td>
                         <td>
-                           <pre>
+                            <pre>
                                <code class="javascript">
                                     {
                                 "filename": "screenshot.png", 
@@ -131,6 +130,27 @@
             </table>
             <!--examples-->
             <h2>Examples</h2>
+            <h3>Basic</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-default btn-fab" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen"><i class="material-icons">crop</i></button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use default template and cover children elements default
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isBasicOpen">
+                    <div class="panel-body">
+                        <pre>
+                        <code class="html">
+                            &ltdiv class="panel-body" screenshot is-open="appCtrl.isBasicOpen"&gt&lt/div&gt
+                        </code>
+                    </pre>
+                    </div>
+                </screenshot>
+            </div>
+
         </div>
     </div>
 

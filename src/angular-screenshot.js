@@ -94,6 +94,7 @@ const screenshot = () => {
          const element = getElement();
          const width = element.offsetWidth;
          const height = element.offsetHeight;
+         console.log(angular.element(element));
          const left = element.offsetLeft;
          const top = element.offsetTop;
          setHightLevelZindex();
