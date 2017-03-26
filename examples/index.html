@@ -134,7 +134,10 @@
             <div class="panel panel-info">
                 <div class="panel-heading clearfix">
                     <div class="btn-group-sm pull-right">
-                        <button class="btn btn-default btn-fab" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen"><i class="material-icons">crop</i></button>
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isBasicOpen]" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen">
+                            <i ng-if="!appCtrl.isBasicOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isBasicOpen" class="material-icons">close</i>
+                        </button>
                     </div>
                     <h4>
                         Use screenshot as element or attribute, then use default template and cover children elements default
@@ -144,6 +147,11 @@
                     <div class="panel-body">
                         <pre>
                         <code class="html">
+                            &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isBasicOpen]" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen"&gt
+                                &lti ng-if="!appCtrl.isBasicOpen" class="material-icons"&gtcrop&lt/i&gt
+                                &lti ng-if="appCtrl.isBasicOpen" class="material-icons"&gtclose&lt/i&gt
+                            &lt/button&gt
+                            &lt!--screenshot--&gt
                             &ltscreenshot is-open="appCtrl.isBasicOpen"&gt
                                 &ltdiv class="panel-body"&gt
                                     ...
@@ -154,7 +162,21 @@
                     </div>
                 </screenshot>
             </div>
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                   <div class="btn-group-sm pull-right">
+                       <button class="btn btn-fab btn-default">
+                           <i class="material-icons">crop</i>
+                       </button>
+                   </div>
+                   <h4>
+                       Use target to set screenshot section on element children, and use some custom options
+                   </h4>
+                </div>
+                <div class="panel-body">
 
+                </div>
+            </div>
         </div>
     </div>
 

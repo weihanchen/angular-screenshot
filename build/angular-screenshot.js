@@ -160,6 +160,11 @@ var screenshot = function screenshot() {
          }
       };
 
+      var canvasContextmenuListener = function canvasContextmenuListener() {
+         self.isOpen = false;
+         $scope.$apply();
+      };
+
       var closeScreenshot = function closeScreenshot() {
          _utils.domprocess.remove(self.interactiveCanvas);
          _utils.domprocess.remove(self.toolboxElement);
@@ -178,7 +183,7 @@ var screenshot = function screenshot() {
          _utils.domprocess.createCanvas(width, height).then(function (canvas) {
             return _utils.domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second);
          }).then(_utils.domprocess.appendToBody).then(function (canvas) {
-            return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener);
+            return _utils.domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener, canvasContextmenuListener);
          }).then(function (canvas) {
             return self.interactiveCanvas = canvas;
          });
@@ -417,7 +422,7 @@ var createCanvas = function createCanvas(width, height) {
    return Promise.resolve(canvas);
 };
 
-var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener) {
+var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) {
    var context = canvas.getContext('2d'),
        rect = {
       startX: 0,
@@ -455,9 +460,16 @@ var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackg
       dragging = false;
       mouseupListener(canvas, rect);
    };
+
+   var contextmenu = function contextmenu(e) {
+      contextmenuListener();
+      e.preventDefault();
+      return false;
+   };
    canvas.addEventListener('mousedown', mousedown, false);
    canvas.addEventListener('mouseup', mouseup, false);
    canvas.addEventListener('mousemove', mousemove, false);
+   canvas.addEventListener('contextmenu', contextmenu, false);
    return Promise.resolve(canvas);
 };
 

@@ -46,7 +46,7 @@ const createCanvas = (width, height) => {
    return Promise.resolve(canvas);
 };
 
-const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, mousedownListener) => {
+const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) => {
    const context = canvas.getContext('2d'),
       rect = {
          startX: 0,
@@ -84,9 +84,16 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
       dragging = false;
       mouseupListener(canvas, rect);
    };
+
+   const contextmenu = (e) => {
+      contextmenuListener();
+      e.preventDefault();
+      return false;
+   };
    canvas.addEventListener('mousedown', mousedown, false);
    canvas.addEventListener('mouseup', mouseup, false);
    canvas.addEventListener('mousemove', mousemove, false);
+   canvas.addEventListener('contextmenu', contextmenu, false);
    return Promise.resolve(canvas);
 };
 

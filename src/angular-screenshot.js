@@ -85,6 +85,11 @@ const screenshot = () => {
          }
       };
 
+      const canvasContextmenuListener = () => {
+         self.isOpen = false;
+         $scope.$apply();
+      };
+
       const closeScreenshot = () => {
          domprocess.remove(self.interactiveCanvas);
          domprocess.remove(self.toolboxElement);
@@ -103,7 +108,7 @@ const screenshot = () => {
          domprocess.createCanvas(width, height)
             .then(canvas => domprocess.setCanvasStyle(canvas, left, top, colors.gray, hightLevelZindex.second))
             .then(domprocess.appendToBody)
-            .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener))
+            .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener, canvasContextmenuListener))
             .then(canvas => self.interactiveCanvas = canvas);
       };
 
