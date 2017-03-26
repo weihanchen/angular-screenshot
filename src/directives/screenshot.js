@@ -1,5 +1,5 @@
 import {
-   domcapture,
+//    domcapture,
    domprocess
 } from '../utils';
 import domtoimage from 'dom-to-image';
