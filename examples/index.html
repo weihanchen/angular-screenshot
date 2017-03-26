@@ -58,9 +58,18 @@
                     angular.module("app", ["angular-screenshot"])
                 </code>
             </pre>
+            Basic usage, is-open parameter to controll screenshot open/close.
+            <pre>
+                <code class="html">
+                    &ltscreenshot is-open="appCtrl.isOpen"&gt
+                        ....some child elements here.
+                    &lt/screenshot&gt
+                </code>
+            </pre>
             <!--options-->
             <p></p>
             <h2>Options</h2>
+            <span class="text-warning">Close screenshot default listening right click event to close, you can add key event listener to close screenshot with some key.</span>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -84,7 +93,7 @@
                         <td>false</td>
                         <td>Flag indicating that open the capture canvas.</td>
                         <td>
-                            &ltscreenshot target="root" isOpen="appCtrl.isOpen"&gt&ltscreenshot&gt
+                            &ltscreenshot target="{<span>{::'#root'}</span>}" isOpen="appCtrl.isOpen"&gt&ltscreenshot&gt
                         </td>
                     </tr>
                     <tr>
@@ -95,16 +104,14 @@
                                     {
                                 "filename": "screenshot.png", 
                                 "cancelText": "Cancel",
-                                "downloadText": "Download",
-                                "template": "&ltdiv class=\"screenshot-toolbox\">&ltbutton ng-click=\"screenshotCtrl.cancel()\"&gtCancel&lt/button&gtbutton ng-click=\"screenshotCtrl.download()\"&gtDownload&lt/button&gt&lt/div>",
-                                "templateScope": "$scope"
+                                "downloadText": "Download"
                             }
                                </code>
                             </pre>
                         </td>
-                        <td>toolboxOptions.</td>
+                        <td>options of screenshot toolbox</td>
                         <td>
-                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions"&gt&ltscreenshot&gt
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolboxOptions"&gt&ltscreenshot&gt
                         </td>
                     </tr>
                     <tr>
@@ -211,21 +218,55 @@
                 <div class="panel-heading clearfix">
                     <div class="btn-group-sm pull-right">
                         <button class="btn btn-fab btn-default" ng-click="appCtrl.isAdvanceOpen = !appCtrl.isAdvanceOpen">
-                           <i class="material-icons">crop</i>
+                            <i ng-if="!appCtrl.isAdvanceOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isAdvanceOpen" class="material-icons">close</i>
                        </button>
                     </div>
                     <h4>
                         Use custom toolboxOptions to customize your toolbox template, then use expose api to interactive with directive.
                     </h4>
                 </div>
-                <screenshot is-open="appCtrl.isAdvanceOpen">
+                <screenshot is-open="appCtrl.isAdvanceOpen" api="appCtrl.advanceApi">
                     <screenshot-toolbox>
-                        <button ng-click="appCtrl.test()">My Button</button>
+                        <div class="btn-group-sm">
+                            <button class="btn btn-default btn-fab" ng-click="appCtrl.cancel()">
+                                <i class="material-icons">close</i>
+                            </button>
+                            <button class="btn btn-success btn-fab" ng-click="appCtrl.download()">
+                                <i class="material-icons">check</i>
+                            </button>
+                        </div>
                     </screenshot-toolbox>
                     <div class="panel-body">
-
+                        <pre>
+                            <code class="html">
+                                &ltscreenshot is-open="appCtrl.isAdvanceOpen" api="appCtrl.advanceApi"&gt
+                                    &ltscreenshot-toolbox&gt
+                                        &ltdiv class="btn-group-sm"&gt
+                                             &ltbutton class="btn btn-default btn-fab" ng-click="appCtrl.cancel()"&gt
+                                                 &lti class="material-icons"&gtclose&lt/i&gt
+                                             &lt/button&gt
+                                             &ltbutton class="btn btn-success btn-fab" ng-click="appCtrl.download()"&gt
+                                                 &lti class="material-icons"&gtcheck&lt/i&gt
+                                             &lt/button&gt
+                                        &lt/div&gt
+                                    &lt/screenshot-toolbox&gt
+                                    &ltdiv class="panel-body"&gt
+                                        ...
+                                    &lt/div&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
                     </div>
                 </screenshot>
+            </div>
+            <h3>Todo</h3>
+            <div class="well">
+                <ul>
+                    <li><span class="text-warning"><strong>Capture with font can cause some problem, and this bug still trying fix.</strong></span></li>
+                    <li><span class="text-warning"><strong>RWD issue fix.</strong></span></li>
+                    <li><span class="text-info"><strong>Add saveas feature.</strong></span></li>
+                </ul>
             </div>
         </div>
     </div>

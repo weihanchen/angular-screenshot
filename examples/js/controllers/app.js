@@ -3,31 +3,30 @@
    angular.module('app', ['angular-screenshot'])
       .controller('AppController', ['$scope', appController]);
 
-   function appController($scope) {
+   function appController() {
       var self = this;
+      self.advanceApi;
+      self.cancel = cancel;
       self.download = download;
       self.isOpenScreenshot = false;
-      self.screenshotApi = {};
       self.openScreenshot = openScreenshot;
       self.target1Options = {
          filename: 'target1.png',
          downloadText: 'Download me',
          cancelText: 'Close it!'
       };
-      self.advanceOptions = {
-         template: 'my-custom-template'  
-      };
-      self.test = function() {
-         console.log('test');
-      };
-      self.$scope = $scope;
+
+      function cancel() {
+         if (self.advanceApi) self.advanceApi.cancel();
+      }
+
+
+      function download() {
+         if (self.advanceApi) self.advanceApi.download();
+      }
 
       function openScreenshot() {
          self.isOpenScreenshot = !self.isOpenScreenshot;
-      }
-
-      function download() {
-         self.screenshotApi.download();
       }
    }
 })();
