@@ -51,7 +51,10 @@ const screenshot = () => {
          return zMax;
       };
 
-      const getElement = () => self.target ? angular.element(self.target)[0] : $element.children()[0];
+      const getElement = () => self.target ? angular.element(self.target)[0] : $element.children().filter((index, element) => {
+         const elementName = element.tagName.toLowerCase();
+         return elementName !== 'screenshot-toolbox';
+      })[0];
 
       const setHightLevelZindex = () => {
          const maxZindex = findMaxZindex();
@@ -111,6 +114,15 @@ const screenshot = () => {
             .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener, canvasContextmenuListener))
             .then(canvas => self.interactiveCanvas = canvas);
       };
+      /**
+       * 
+       * @param {string} template - allow screenshot-toolbox directive setting with
+       * @param {string} templateScope - scope of $compile toolbox content
+       */
+      const setTemplate = (template, templateScope) => {
+         self.template = template;
+         self.templateScope = templateScope;
+      };
 
       self.cancel = cancel;
       self.download = download;
@@ -120,6 +132,7 @@ const screenshot = () => {
       self.cancelText = 'Cancel';
       self.downloadText = 'Download';
       self.filename = 'screenshot.png';
+      self.setTemplate = setTemplate;
       self.template = '<div class="screenshot-toolbox">' +
          '<button class="btn" type="button" ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' +
          '<button class="btn" type="button" ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' +
@@ -143,8 +156,6 @@ const screenshot = () => {
          self.cancelText = newVal.cancelText ? newVal.cancelText : self.cancelText;
          self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
          self.filename = newVal.filename ? newVal.filename : self.filename;
-         self.template = newVal.template ? newVal.template : self.template;
-         self.templateScope = newVal.templateScope ? newVal.templateScope : self.templateScope;
       });
    };
    return {
@@ -160,6 +171,20 @@ const screenshot = () => {
       bindToController: true
    };
 };
+
+const screenshotToolbox = () => {
+   const linkFn = (scope, element, attrs, screenshotCtrl) => {
+      const template = element.children().html();
+      screenshotCtrl.setTemplate(template, scope);
+   };
+   return {
+      restruct: 'E',
+      template: '<div class="screenshot-toolbox-custom" ng-transclude></div>',
+      require: '^screenshot',
+      link: linkFn,
+      transclude: true
+   };
+};
 /**
  * @ngdoc directive
  * @name screenshot
@@ -172,12 +197,11 @@ const screenshot = () => {
  * {
  *    filename: 'screenshot.png', 
  *    cancelText: 'Cancel',
- *    downloadText: 'Download',
- *    template: '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
- *    templateScope: $scope
+ *    downloadText: 'Download'
  * }] toolboxOptions
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 
 angular.module('angular-screenshot', [])
-   .directive('screenshot', screenshot);
+   .directive('screenshot', screenshot)
+   .directive('screenshotToolbox', screenshotToolbox);

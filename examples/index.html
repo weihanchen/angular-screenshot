@@ -164,22 +164,71 @@
             </div>
             <div id="target1" class="panel panel-info">
                 <div class="panel-heading clearfix">
-                   <div class="btn-group-sm pull-right">
-                       <button class="btn btn-fab btn-default" ng-click="appCtrl.target1Open = !appCtrl.target1Open">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab btn-default" ng-click="appCtrl.target1Open = !appCtrl.target1Open">
                            <i class="material-icons">crop</i>
                        </button>
-                   </div>
-                   <h4>
-                       Use target to set screenshot section on element children, and use some custom options
-                   </h4>
+                    </div>
+                    <h4>
+                        Use target to set screenshot section on element children, and use some custom options
+                    </h4>
                 </div>
                 <div class="panel-body">
                     <screenshot target="{{::'#target1'}}" is-open="appCtrl.target1Open" toolbox-options="appCtrl.target1Options"></screenshot>
+                    View:
+                    <pre>
+                        <code class="html">
+                            &ltdiv id="target1" class="panel panel-info"&gt
+                                ...
+                                &ltdiv class="panel-body"&gt
+                                    &ltscreenshot target="<span>{</span>{::'#target1'}<span>}</span>" is-open="appCtrl.target1Open" toolbox-options="appCtrl.target1Options"&gt&lt/screenshot&gt
+                                    ...
+                                &lt/div&gt
+                            &lt/div&gt
+                        </code>
+                    </pre> Controller:
+                    <pre>
+                        <code class="javascript">
+                            'use strict';
+                            (function () {
+                                angular.module('app', ['angular-screenshot'])
+                                    .controller('AppController', ['$scope', appController]);
+                                function appController($scope) {
+                                    var self = this;
+                                    self.target1Options = {
+                                        filename: 'target1.png',
+                                        downloadText: 'Download me',
+                                        cancelText: 'Close it!'
+                                    };
+                                }
+                            })()
+                        </code>
+                    </pre>
                 </div>
+            </div>
+            <h3>Advance usage</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab btn-default" ng-click="appCtrl.isAdvanceOpen = !appCtrl.isAdvanceOpen">
+                           <i class="material-icons">crop</i>
+                       </button>
+                    </div>
+                    <h4>
+                        Use custom toolboxOptions to customize your toolbox template, then use expose api to interactive with directive.
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isAdvanceOpen">
+                    <screenshot-toolbox>
+                        <button ng-click="appCtrl.test()">My Button</button>
+                    </screenshot-toolbox>
+                    <div class="panel-body">
+
+                    </div>
+                </screenshot>
             </div>
         </div>
     </div>
-
 </body>
 
 </html>

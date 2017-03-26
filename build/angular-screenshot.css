@@ -46,3 +46,6 @@
 
 .screenshot-toolbox .btn-navy:hover, .screenshot-toolbox .btn.red:focus {
   background-color: #138661; }
+
+.screenshot-toolbox-custom {
+  visibility: hidden; }

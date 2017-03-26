@@ -11,8 +11,14 @@
       self.openScreenshot = openScreenshot;
       self.target1Options = {
          filename: 'target1.png',
-         downloadText: '',
-         cancelText: '&times;'
+         downloadText: 'Download me',
+         cancelText: 'Close it!'
+      };
+      self.advanceOptions = {
+         template: 'my-custom-template'  
+      };
+      self.test = function() {
+         console.log('test');
       };
       self.$scope = $scope;
 

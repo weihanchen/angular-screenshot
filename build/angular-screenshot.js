@@ -128,7 +128,10 @@ var screenshot = function screenshot() {
       };
 
       var getElement = function getElement() {
-         return self.target ? angular.element(self.target)[0] : $element.children()[0];
+         return self.target ? angular.element(self.target)[0] : $element.children().filter(function (index, element) {
+            var elementName = element.tagName.toLowerCase();
+            return elementName !== 'screenshot-toolbox';
+         })[0];
       };
 
       var setHightLevelZindex = function setHightLevelZindex() {
@@ -189,6 +192,11 @@ var screenshot = function screenshot() {
          });
       };
 
+      var setTemplate = function setTemplate(template, templateScope) {
+         self.template = template;
+         self.templateScope = templateScope;
+      };
+
       self.cancel = cancel;
       self.download = download;
       self.interactiveCanvas;
@@ -197,6 +205,7 @@ var screenshot = function screenshot() {
       self.cancelText = 'Cancel';
       self.downloadText = 'Download';
       self.filename = 'screenshot.png';
+      self.setTemplate = setTemplate;
       self.template = '<div class="screenshot-toolbox">' + '<button class="btn" type="button" ng-click="screenshotCtrl.cancel()">{{screenshotCtrl.cancelText}}</button>' + '<button class="btn" type="button" ng-click="screenshotCtrl.download()">{{screenshotCtrl.downloadText}}</button>' + '</div>';
       self.templateScope = $scope;
       $timeout(function () {
@@ -223,8 +232,6 @@ var screenshot = function screenshot() {
          self.cancelText = newVal.cancelText ? newVal.cancelText : self.cancelText;
          self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
          self.filename = newVal.filename ? newVal.filename : self.filename;
-         self.template = newVal.template ? newVal.template : self.template;
-         self.templateScope = newVal.templateScope ? newVal.templateScope : self.templateScope;
       });
    };
    return {
@@ -240,6 +247,20 @@ var screenshot = function screenshot() {
       bindToController: true
    };
 };
+
+var screenshotToolbox = function screenshotToolbox() {
+   var linkFn = function linkFn(scope, element, attrs, screenshotCtrl) {
+      var template = element.children().html();
+      screenshotCtrl.setTemplate(template, scope);
+   };
+   return {
+      restruct: 'E',
+      template: '<div class="screenshot-toolbox-custom" ng-transclude></div>',
+      require: '^screenshot',
+      link: linkFn,
+      transclude: true
+   };
+};
 /**
  * @ngdoc directive
  * @name screenshot
@@ -252,14 +273,12 @@ var screenshot = function screenshot() {
  * {
  *    filename: 'screenshot.png', 
  *    cancelText: 'Cancel',
- *    downloadText: 'Download',
- *    template: '<div class="screenshot-toolbox"><button ng-click="screenshotCtrl.cancel()">Cancel</button><button ng-click="screenshotCtrl.download()">Download</button></div>',
- *    templateScope: $scope
+ *    downloadText: 'Download'
  * }] toolboxOptions
  * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
  */
 
-angular.module('angular-screenshot', []).directive('screenshot', screenshot);
+angular.module('angular-screenshot', []).directive('screenshot', screenshot).directive('screenshotToolbox', screenshotToolbox);
 
 /***/ }),
 /* 1 */
