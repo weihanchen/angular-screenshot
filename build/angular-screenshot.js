@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.1.0 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.1.1 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -231,7 +231,7 @@ var screenshot = function screenshot() {
       };
 
       var getElementSelector = function getElementSelector() {
-         return self.target ? angular.element(self.target) : $element.children().filter(function (index, element) {
+         return self.target ? angular.element(self.target) : $element.filter(function (index, element) {
             var elementName = element.tagName.toLowerCase();
             return elementName !== 'screenshot-toolbox';
          });
@@ -291,8 +291,9 @@ var screenshot = function screenshot() {
 
       var openScreenshot = function openScreenshot() {
          var elementSelector = getElementSelector();
-         var width = elementSelector.outerWidth(true);
-         var height = elementSelector.outerHeight(true);
+         var boudingClientRect = elementSelector[0].getBoundingClientRect();
+         var width = boudingClientRect.width;
+         var height = boudingClientRect.height;
          var offset = elementSelector.offset();
          var left = offset.left;
          var top = offset.top;
@@ -694,8 +695,10 @@ var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackg
    var dragging = false;
 
    var draw = function draw() {
+      context.beginPath();
       context.fillStyle = rectBackground;
       context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+      context.closePath();
    };
 
    var mousedown = function mousedown(e) {

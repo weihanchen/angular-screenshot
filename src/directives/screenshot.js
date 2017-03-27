@@ -64,7 +64,7 @@ const screenshot = () => {
          return zMax;
       };
 
-      const getElementSelector = () => self.target ? angular.element(self.target) : $element.children().filter((index, element) => {
+      const getElementSelector = () => self.target ? angular.element(self.target) : $element.filter((index, element) => {
          const elementName = element.tagName.toLowerCase();
          return elementName !== 'screenshot-toolbox';
       });
@@ -126,8 +126,9 @@ const screenshot = () => {
 
       const openScreenshot = () => {
          const elementSelector = getElementSelector();
-         const width = elementSelector.outerWidth(true);
-         const height = elementSelector.outerHeight(true);
+         const boudingClientRect = elementSelector[0].getBoundingClientRect();
+         const width = boudingClientRect.width;
+         const height = boudingClientRect.height;
          const offset = elementSelector.offset();
          const left = offset.left;
          const top = offset.top;

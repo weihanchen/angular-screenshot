@@ -1,7 +1,8 @@
 'use strict';
 (function () {
    angular.module('app', ['angular-screenshot'])
-      .controller('AppController', ['$scope', appController]);
+      .controller('AppController', ['$scope', appController])
+      .directive('test', testDirecitve);
 
    function appController() {
       var self = this;
@@ -28,5 +29,11 @@
       function openScreenshot() {
          self.isOpenScreenshot = !self.isOpenScreenshot;
       }
+   }
+
+   function testDirecitve() {
+      return {
+         template: '<div><div class="well"></div></div>'
+      };
    }
 })();

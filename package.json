@@ -1,6 +1,6 @@
 {
   "name": "angular-screenshot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Angular screenshot in directive for screen capture.",
   "main": "dist/angular-screenshot.js",
   "repository": {
@@ -24,7 +24,7 @@
     "copy:example": "copyfiles -f ./build/*.js ./examples/js/plugins && copyfiles -f ./build/*.css ./examples/css/plugins",
     "watch": "onchange src/*.js src/**/*.js src/**/*.scss -- npm run build",
     "dev": "webpack-dev-server --port 8000 --inline --watch --devtool eval --progress --colors --hot --content-base examples",
-    "release": "webpack --define increase='patch' && webpack -p"
+    "release": "webpack --define increase=patch && webpack -p"
   },
   "dependencies": {
     "angular": "^1.3"
