@@ -1,11 +1,11 @@
 import {
-//    domcapture,
+   // domcapture,
    domprocess
 } from '../utils';
 import domtoimage from 'dom-to-image';
 const screenshot = () => {
    const screenshotController = function ($scope, $element, $compile, $timeout) {
-      const colors = { gray: '#898b89', lightGray: '#e6e3e3' },
+      const colors = {gray: '#898b89', lightGray: '#e6e3e3'},
          hightLevelZindex = {
             top: 1,
             second: 0
@@ -30,19 +30,27 @@ const screenshot = () => {
       };
 
       const download = () => {
+         // closeScreenshot();
          self.isOpen = false;
-         const element = getElement();
-         domtoimage.toPng(element)
-            .then(domprocess.dataUrlToImage)
-            .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
-            .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
-         // domcapture.getCanvas(element)
-         //    .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+         $timeout(() => {
+            const elementSelector = getElementSelector();
+            const element = elementSelector[0];
+            const options = getOptions(element);
 
-         //    domcapture.getCanvas(element)
-         //       .then(domprocess.canvasToImage)
-         //       .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
-         //       .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+            domtoimage.toPng(element, options)
+               .then(domprocess.dataUrlToImage)
+               .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
+               .then(canvas => domprocess.downloadCanvas(canvas, self.filename))
+               .then(domprocess.remove);
+         });
+
+         //  domcapture.getCanvas(element)
+         //     .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+         //
+         //  domcapture.getCanvas(element)
+         //     .then(domprocess.canvasToImage)
+         //     .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
+         //     .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
       };
 
       const findMaxZindex = () => {
@@ -56,10 +64,23 @@ const screenshot = () => {
          return zMax;
       };
 
-      const getElement = () => self.target ? angular.element(self.target)[0] : $element.children().filter((index, element) => {
+      const getElementSelector = () => self.target ? angular.element(self.target) : $element.children().filter((index, element) => {
          const elementName = element.tagName.toLowerCase();
          return elementName !== 'screenshot-toolbox';
-      })[0];
+      });
+
+      const getOptions = (element) => {
+         const boudingClientRect = element.getBoundingClientRect();
+         let options = {
+            width: boudingClientRect.width,
+            height: boudingClientRect.height
+         };
+         if (domprocess.isTransparent(element)) {
+            const parentBackgroundColor = domprocess.getStyle(element, 'backgroundColor');
+            options = Object.assign({}, options, { 'bgcolor': parentBackgroundColor });
+         }
+         return options;
+      };
 
       const setHightLevelZindex = () => {
          const maxZindex = findMaxZindex();
@@ -104,11 +125,10 @@ const screenshot = () => {
       };
 
       const openScreenshot = () => {
-         const element = getElement();
-         const elements = angular.element(element);
-         const width = elements.outerWidth(true);
-         const height = elements.outerHeight(true);
-         const offset = elements.offset();
+         const elementSelector = getElementSelector();
+         const width = elementSelector.outerWidth(true);
+         const height = elementSelector.outerHeight(true);
+         const offset = elementSelector.offset();
          const left = offset.left;
          const top = offset.top;
          setHightLevelZindex();
@@ -120,7 +140,7 @@ const screenshot = () => {
             .then(canvas => self.interactiveCanvas = canvas);
       };
       /**
-       * 
+       *
        * @param {string} template - allow screenshot-toolbox directive setting with
        * @param {string} templateScope - scope of $compile toolbox content
        */
@@ -181,12 +201,12 @@ const screenshot = () => {
  * @name screenshot
  * @description
  * Capture dom setion with indicate element
- * 
+ *
  * @param {string@} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
  * @param {object=} [toolboxOptions=
  * {
- *    filename: 'screenshot.png', 
+ *    filename: 'screenshot.png',
  *    cancelText: 'Cancel',
  *    downloadText: 'Download'
  * }] toolboxOptions

@@ -49,6 +49,16 @@ const createCanvas = (width, height) => {
    return Promise.resolve(canvas);
 };
 
+const getStyle = (element, property) =>{
+   const styles = window.getComputedStyle(element);
+   return styles[property];
+};
+
+const isTransparent = (element) => {
+   const backgroundColor = window.getComputedStyle(element).backgroundColor;
+   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0,0,0,0)';
+};
+
 const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) => {
    const context = canvas.getContext('2d'),
       rect = {
@@ -60,8 +70,10 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
    let dragging = false;
 
    const draw = () => {
+      context.beginPath();
       context.fillStyle = rectBackground;
       context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+      context.closePath();
    };
 
    const mousedown = (e) => {
@@ -135,6 +147,8 @@ const domprocess = {
    createCanvas,
    dataUrlToImage,
    downloadCanvas,
+   getStyle,
+   isTransparent,
    listenInteractiveCanvas,
    remove,
    setCanvasStyle,

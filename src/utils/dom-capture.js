@@ -131,18 +131,20 @@ const getSvgUrl = (node) => Promise.resolve(node)
    .then(svgContent => `data:image/svg+xml;charset=utf-8,${svgContent}`);
 
 
-const getCanvas = (element) => {
+const getCanvas = (element, options) => {
+   options = options || {};
    const cloneNode = element.cloneNode(true); //deep clone
-   const width = element.offsetWidth;
-   const height = element.offsetHeight;
+   const boudingClientRect = element.getBoundingClientRect();
+   const width = boudingClientRect.width;
+   const height = boudingClientRect.height;
    return Promise.resolve(cloneNode)
       .then(addStylesheets)
       .then(getSvgUrl)
       .then(getImage)
       .then(image => {
          const canvas = document.createElement('canvas');
-         canvas.width = width;
-         canvas.height = height;
+         canvas.width = options.width || width;
+         canvas.height = options.height || height;
          canvas.getContext('2d').drawImage(image, 0, 0);
          return canvas;
       });

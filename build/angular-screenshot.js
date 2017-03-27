@@ -196,20 +196,27 @@ var screenshot = function screenshot() {
       };
 
       var download = function download() {
+         // closeScreenshot();
          self.isOpen = false;
-         var element = getElement();
-         _domToImage2.default.toPng(element).then(_utils.domprocess.dataUrlToImage).then(function (image) {
-            return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
-         }).then(function (canvas) {
-            return _utils.domprocess.downloadCanvas(canvas, self.filename);
-         });
-         // domcapture.getCanvas(element)
-         //    .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+         $timeout(function () {
+            var elementSelector = getElementSelector();
+            var element = elementSelector[0];
+            var options = getOptions(element);
 
-         //    domcapture.getCanvas(element)
-         //       .then(domprocess.canvasToImage)
-         //       .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
-         //       .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+            _domToImage2.default.toPng(element, options).then(_utils.domprocess.dataUrlToImage).then(function (image) {
+               return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
+            }).then(function (canvas) {
+               return _utils.domprocess.downloadCanvas(canvas, self.filename);
+            }).then(_utils.domprocess.remove);
+         });
+
+         //  domcapture.getCanvas(element)
+         //     .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+         //
+         //  domcapture.getCanvas(element)
+         //     .then(domprocess.canvasToImage)
+         //     .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
+         //     .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
       };
 
       var findMaxZindex = function findMaxZindex() {
@@ -223,11 +230,24 @@ var screenshot = function screenshot() {
          return zMax;
       };
 
-      var getElement = function getElement() {
-         return self.target ? angular.element(self.target)[0] : $element.children().filter(function (index, element) {
+      var getElementSelector = function getElementSelector() {
+         return self.target ? angular.element(self.target) : $element.children().filter(function (index, element) {
             var elementName = element.tagName.toLowerCase();
             return elementName !== 'screenshot-toolbox';
-         })[0];
+         });
+      };
+
+      var getOptions = function getOptions(element) {
+         var boudingClientRect = element.getBoundingClientRect();
+         var options = {
+            width: boudingClientRect.width,
+            height: boudingClientRect.height
+         };
+         if (_utils.domprocess.isTransparent(element)) {
+            var parentBackgroundColor = _utils.domprocess.getStyle(element, 'backgroundColor');
+            options = Object.assign({}, options, { 'bgcolor': parentBackgroundColor });
+         }
+         return options;
       };
 
       var setHightLevelZindex = function setHightLevelZindex() {
@@ -270,11 +290,10 @@ var screenshot = function screenshot() {
       };
 
       var openScreenshot = function openScreenshot() {
-         var element = getElement();
-         var elements = angular.element(element);
-         var width = elements.outerWidth(true);
-         var height = elements.outerHeight(true);
-         var offset = elements.offset();
+         var elementSelector = getElementSelector();
+         var width = elementSelector.outerWidth(true);
+         var height = elementSelector.outerHeight(true);
+         var offset = elementSelector.offset();
          var left = offset.left;
          var top = offset.top;
          setHightLevelZindex();
@@ -288,7 +307,7 @@ var screenshot = function screenshot() {
          });
       };
       /**
-       * 
+       *
        * @param {string} template - allow screenshot-toolbox directive setting with
        * @param {string} templateScope - scope of $compile toolbox content
        */
@@ -352,12 +371,12 @@ var screenshot = function screenshot() {
  * @name screenshot
  * @description
  * Capture dom setion with indicate element
- * 
+ *
  * @param {string@} [target=element.children()] Use target element with capture section.
  * @param {boolean=} [isOpen=false] Flag indicating that open the capture canvas.
  * @param {object=} [toolboxOptions=
  * {
- *    filename: 'screenshot.png', 
+ *    filename: 'screenshot.png',
  *    cancelText: 'Cancel',
  *    downloadText: 'Download'
  * }] toolboxOptions
@@ -530,14 +549,16 @@ var getSvgUrl = function getSvgUrl(node) {
    });
 };
 
-var getCanvas = function getCanvas(element) {
+var getCanvas = function getCanvas(element, options) {
+   options = options || {};
    var cloneNode = element.cloneNode(true); //deep clone
-   var width = element.offsetWidth;
-   var height = element.offsetHeight;
+   var boudingClientRect = element.getBoundingClientRect();
+   var width = boudingClientRect.width;
+   var height = boudingClientRect.height;
    return Promise.resolve(cloneNode).then(addStylesheets).then(getSvgUrl).then(getImage).then(function (image) {
       var canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = options.width || width;
+      canvas.height = options.height || height;
       canvas.getContext('2d').drawImage(image, 0, 0);
       return canvas;
    });
@@ -652,6 +673,16 @@ var createCanvas = function createCanvas(width, height) {
    return Promise.resolve(canvas);
 };
 
+var getStyle = function getStyle(element, property) {
+   var styles = window.getComputedStyle(element);
+   return styles[property];
+};
+
+var isTransparent = function isTransparent(element) {
+   var backgroundColor = window.getComputedStyle(element).backgroundColor;
+   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0,0,0,0)';
+};
+
 var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) {
    var context = canvas.getContext('2d'),
        rect = {
@@ -738,6 +769,8 @@ var domprocess = {
    createCanvas: createCanvas,
    dataUrlToImage: dataUrlToImage,
    downloadCanvas: downloadCanvas,
+   getStyle: getStyle,
+   isTransparent: isTransparent,
    listenInteractiveCanvas: listenInteractiveCanvas,
    remove: remove,
    setCanvasStyle: setCanvasStyle,
