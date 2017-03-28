@@ -26,6 +26,15 @@
     "dev": "webpack-dev-server --port 8000 --inline --watch --devtool eval --progress --colors --hot --content-base examples",
     "release": "webpack --define increase=patch && webpack -p"
   },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "examples",
+    "scripts",
+    "src"
+  ],
   "dependencies": {
     "angular": "^1.3"
   },

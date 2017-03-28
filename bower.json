@@ -17,9 +17,13 @@
   "license": "MIT",
   "homepage": "http://weihanchen.github.io/angular-screenshot",
   "ignore": [
+    "**/.*",
     "node_modules",
     "bower_components",
-    "test"
+    "test",
+    "examples",
+    "scripts",
+    "src"
   ],
   "dependencies": {
     "angular": "^1.3"
