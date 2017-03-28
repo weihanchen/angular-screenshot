@@ -3,12 +3,6 @@ const webpackConfig = require('./webpack.config'),
    generateJsonPlugin = require('generate-json-webpack-plugin');
 webpackConfig.devtool = 'source-map';
 webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof generateJsonPlugin));
-webpackConfig.module.preloaders = [{
-   test: /test\.spec\.js$/,
-   include: /test/,
-   exclude: /(bower_components|node_modules)/,
-   loader: ['babel-loader?presets[]=es2015']
-}];
 
 module.exports = (config) => {
    const configuration = {
@@ -18,13 +12,22 @@ module.exports = (config) => {
          'node_modules/jquery/dist/jquery.min.js',
          'node_modules/angular/angular.min.js',
          'node_modules/angular-mocks/angular-mocks.js',
-         'src/angular-screenshot.js',
-         'test/*.spec.js'
+         { pattern: 'test/index.js', watched: false }],
+      plugins: [
+         'karma-jasmine',
+         'karma-phantomjs-launcher',
+         'karma-mocha',
+         'karma-mocha-reporter',
+         require("karma-coverage"),
+         require("karma-webpack")
       ],
       preprocessors: {
-         './src/angular-screenshot.js': ['webpack']
+         'test/index.js': ['webpack']
       },
       webpack: webpackConfig,
+      webpackMiddleware: {
+         stats: "errors-only"
+      },
       coverageReporter: {
          type: 'lcov',
          dir: 'coverage/'
@@ -39,7 +42,7 @@ module.exports = (config) => {
       colors: true,
       // level of logging
       // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-      logLevel: config.LOG_INFO,
+      logLevel: config.LOG_DEBUG,
       // enable / disable watching file and executing tests whenever any file changes
       autoWatch: true,
       // start these browsers

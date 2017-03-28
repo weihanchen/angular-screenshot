@@ -1,4 +1,5 @@
 'use strict';
+import 'babel-polyfill';
 import * as angular from 'angular';
 import {
    screenshot,
