@@ -1,4 +1,5 @@
 'use strict';
+const DOMURL = window.URL || window.webkitURL || window;
 const appendToBody = (element) => {
    document.body.appendChild(element);
    return Promise.resolve(element);
@@ -18,8 +19,16 @@ const clipImageToCanvas = (image, clipStartX, clipStartY, clipWidth, clipHeight)
    .then(canvas => {
       const context = canvas.getContext('2d');
       context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, canvas.width, canvas.height);
+      remove(image);
       return canvas;
    });
+
+const createCanvas = (width, height) => {
+   const canvas = document.createElement('canvas');
+   canvas.width = width;
+   canvas.height = height;
+   return Promise.resolve(canvas);
+};
 
 const dataUrlToImage = (url) => new Promise((resolve, reject) => {
    const image = new Image();
@@ -38,14 +47,8 @@ const downloadCanvas = (canvas, filename) => {
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();
-   return Promise.resolve(canvas);
-};
+   DOMURL.revokeObjectURL(downloadUrl);
 
-
-const createCanvas = (width, height) => {
-   const canvas = document.createElement('canvas');
-   canvas.width = width;
-   canvas.height = height;
    return Promise.resolve(canvas);
 };
 
@@ -114,6 +117,7 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
 
 const remove = (element) => {
    if (element) element.remove();
+   element = null;
 };
 
 const setCanvasStyle = (canvas, left, top, background, zIndex) => {

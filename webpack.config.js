@@ -38,7 +38,7 @@ module.exports = {
    },
    module: {
       loaders: [{
-         test: /\.js/,
+         test: /(\.spec)\.js$/,
          exclude: /(node_modules|bower_components)/,
          loaders: ['babel-loader?presets[]=es2015']
       }, {

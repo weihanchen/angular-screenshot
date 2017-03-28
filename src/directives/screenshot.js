@@ -39,7 +39,10 @@ const screenshot = () => {
 
             domtoimage.toPng(element, options)
                .then(domprocess.dataUrlToImage)
-               .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
+               .then(image => {
+                  domprocess.remove(image);
+                  return domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
+               })
                .then(canvas => domprocess.downloadCanvas(canvas, self.filename))
                .then(domprocess.remove);
          });

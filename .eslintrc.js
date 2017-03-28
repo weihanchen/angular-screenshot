@@ -6,10 +6,13 @@ module.exports = {
    },
    "extends": ["eslint:recommended", "angular"],
    "globals": {
+      "angular": true,
       "beforeEach": true,
       "describe": true,
+      "expect": true,
       "global": true,
       "inject": true,
+      "it": true,
       "process": true,
       "window": true,
       "Timeline": true,

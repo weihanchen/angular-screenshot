@@ -204,6 +204,7 @@ var screenshot = function screenshot() {
             var options = getOptions(element);
 
             _domToImage2.default.toPng(element, options).then(_utils.domprocess.dataUrlToImage).then(function (image) {
+               _utils.domprocess.remove(image);
                return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
             }).then(function (canvas) {
                return _utils.domprocess.downloadCanvas(canvas, self.filename);
@@ -622,6 +623,7 @@ exports.default = domcapture;
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
+var DOMURL = window.URL || window.webkitURL || window;
 var appendToBody = function appendToBody(element) {
    document.body.appendChild(element);
    return Promise.resolve(element);
@@ -641,8 +643,16 @@ var clipImageToCanvas = function clipImageToCanvas(image, clipStartX, clipStartY
    return createCanvas(Math.abs(clipWidth), Math.abs(clipHeight)).then(function (canvas) {
       var context = canvas.getContext('2d');
       context.drawImage(image, clipStartX, clipStartY, clipWidth, clipHeight, 0, 0, canvas.width, canvas.height);
+      remove(image);
       return canvas;
    });
+};
+
+var createCanvas = function createCanvas(width, height) {
+   var canvas = document.createElement('canvas');
+   canvas.width = width;
+   canvas.height = height;
+   return Promise.resolve(canvas);
 };
 
 var dataUrlToImage = function dataUrlToImage(url) {
@@ -664,13 +674,8 @@ var downloadCanvas = function downloadCanvas(canvas, filename) {
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();
-   return Promise.resolve(canvas);
-};
+   DOMURL.revokeObjectURL(downloadUrl);
 
-var createCanvas = function createCanvas(width, height) {
-   var canvas = document.createElement('canvas');
-   canvas.width = width;
-   canvas.height = height;
    return Promise.resolve(canvas);
 };
 
@@ -739,6 +744,7 @@ var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackg
 
 var remove = function remove(element) {
    if (element) element.remove();
+   element = null;
 };
 
 var setCanvasStyle = function setCanvasStyle(canvas, left, top, background, zIndex) {

@@ -3,7 +3,7 @@
 
 Angular screenshot in directive for screen capture.
 
-Check out the homepage at [https://weihanchen.github.io/angular-screenshot/](https://weihanchen.github.io/angular-screenshot/) 
+Check out the homepage at [https://weihanchen.github.io/angular-screenshot/](https://weihanchen.github.io/angular-screenshot/)
 
 ## Installation
 Get angular screenshot from bower, npm, or git.
@@ -74,7 +74,7 @@ angular.module('app', ['angular-screenshot'])
 			downloadText: 'Download me',
 			cancelText: 'Close it!'
 		};
-	}	
+	}
 })()
 ```
 
@@ -103,6 +103,9 @@ Use `screenshot-toolbox` to customize your toolbox, then use expose api to inter
 * `npm run build`: generate built files and minified ones.
 * `npm run watch`: watch source files and run build script.
 * `npm run release`: increase package version.
+
+##  Development requirements
+* nodejs ^6.0.0
 
 ## Todos
 * Capture with font can cause some problem, and this bug still trying fix.
