@@ -1,5 +1,6 @@
 # angular-screenshot
 
+[![Build Status](https://travis-ci.org/weihanchen/angular-screenshot.svg?branch=master)](https://travis-ci.org/weihanchen/angular-screenshot)
 
 Angular screenshot in directive for screen capture.
 
