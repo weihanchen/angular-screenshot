@@ -19,6 +19,7 @@ module.exports = (config) => {
          'karma-mocha',
          'karma-mocha-reporter',
          require("karma-coverage"),
+         require("karma-coveralls"),
          require("karma-webpack")
       ],
       preprocessors: {
