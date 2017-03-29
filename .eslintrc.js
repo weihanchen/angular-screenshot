@@ -7,6 +7,7 @@ module.exports = {
    "extends": ["eslint:recommended", "angular"],
    "globals": {
       "angular": true,
+      "afterEach": true,
       "beforeEach": true,
       "describe": true,
       "expect": true,
@@ -14,6 +15,7 @@ module.exports = {
       "inject": true,
       "it": true,
       "process": true,
+      "setTimeout": true,
       "window": true,
       "Timeline": true,
       "__dirname": true,
@@ -46,6 +48,7 @@ module.exports = {
       "angular/log": "off",
       "angular/document-service": "off",
       "angular/definedundefined": "off",
-      "angular/controller-as-vm": "off"
+      "angular/controller-as-vm": "off",
+      "angular/timeout-service": "off"
    }
 };

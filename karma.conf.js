@@ -22,7 +22,7 @@ module.exports = (config) => {
          require("karma-webpack")
       ],
       preprocessors: {
-         'test/index.js': ['webpack']
+         'test/index.js': ['webpack', 'coverage']
       },
       webpack: webpackConfig,
       webpackMiddleware: {

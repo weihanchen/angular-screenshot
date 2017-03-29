@@ -1,56 +1,87 @@
 'use strict';
-import angularScreenshot from '../src/angular-screenshot';
+import '../src/angular-screenshot';
 
-describe('screenshot directive', () => {
-   let $compile, $rootScope, $document;
+describe('screenshot directive', function () {
+   let $compile, $rootScope;
    beforeEach(() => {
-      window.module(angularScreenshot);
-      inject((_$compile_, _$rootScope_, _$document_) => {
+      window.module('angular-screenshot');
+      inject(function (_$compile_, _$rootScope_) {
          $compile = _$compile_;
          $rootScope = _$rootScope_;
-         $document = _$document_;
       });
    });
 
-   const compile = (template) => {
-      const element = $compile(template)($rootScope);
-      $rootScope.$digest();
-      return element;
-   };
+   //    const compile = (template) => {
+   //       const element = $compile(template)($scope);
+   //       $scope.$digest();
+   //       return element;
+   //    };
 
    //  const getIsolateScope = (element) => element.isolateScope();
 
    const getCanvas = (element) => element.find('canvas');
 
+   const waitFor = (timespan) => new Promise((resolve) => setTimeout(() => resolve(), timespan));
+
    describe('basic features', () => {
-      let basicElement,
-          body;
+      let scope,
+         element,
+         body;
       beforeEach(() => {
-         basicElement = compile('<screenshot is-open="isOpen"><div>Hello World</div></screenshot>');
-         body = angular.element('body');
-         body.append(basicElement);
+         scope = $rootScope.$new();
+         element = angular.element('<screenshot is-open="isOpen"><div>Hello World</div></screenshot>');
+         $compile(element)(scope);
+         scope.$digest();
+         body = angular.element(document.body);
+         body.append(element);
       });
-      it('does not rendered the canvas when isOpen = false', () => {
+      afterEach(() => {
+         scope.isOpen = false;
+         scope.$digest();
+         body.find(element).remove();
+      });
+      it('does not rendered the canvas when isOpen = false', (done) => {
          //Arrange
-         $rootScope.isOpen = false;
+         scope.isOpen = false;
          //Act
-         $rootScope.$digest();
-         const canvas = getCanvas(body)[0];
-        
+         scope.$digest();
          //Assert
-         expect(canvas).toBeUndefined();
+         waitFor().then(() => {
+            const canvas = getCanvas(body)[0];
+            expect(canvas).toBeUndefined();
+            done();
+         });
       });
 
-      it('should rendered the canvas when isOpen = true', () => {
+      it('should rendered the canvas when isOpen = true', (done) => {
          //Arrange
-         $rootScope.isOpen = true;
+         scope.isOpen = true;
          //Act
-         $rootScope.$digest();
-         const canvas = getCanvas(body)[0];
-         console.log(body.find('screenshot')[0].offsetHeight)
-
+         scope.$digest();
          //Assert
-         expect(canvas).not.toBeUndefined();
+         waitFor().then(() => {
+            const canvas = getCanvas(body)[0];
+            expect(canvas).not.toBeUndefined();
+            done();
+         });
+      });
+
+      it('does not rendered the canvas when open then send right click on canvas', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act
+         scope.$digest();
+         //Assert
+         waitFor()
+            .then(() => {
+               let canvas = getCanvas(body)[0];
+               const events = document.createEvent('HTMLEvents');
+               events.initEvent('contextmenu', true, false);
+               canvas.dispatchEvent(events);
+               canvas = getCanvas(body)[0];
+               expect(canvas).toBeUndefined();
+               done();
+            });
       });
    });
 });

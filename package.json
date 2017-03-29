@@ -1,6 +1,6 @@
 {
   "name": "angular-screenshot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Angular screenshot in directive for screen capture.",
   "main": "dist/angular-screenshot.js",
   "repository": {
@@ -20,11 +20,12 @@
   },
   "homepage": "http://weihanchen.github.io/angular-screenshot",
   "scripts": {
-    "build": "webpack && webpack -p && npm run copy:example",
+    "build": "npm run esLint:start && npm run test && webpack && webpack -p && npm run copy:example",
     "copy:example": "copyfiles -f ./build/*.js ./examples/js/plugins && copyfiles -f ./build/*.css ./examples/css/plugins",
+    "esLint:start": "./node_modules/.bin/eslint src/**/*.js",
     "watch": "onchange src/*.js src/**/*.js src/**/*.scss -- npm run build",
     "dev": "webpack-dev-server --port 8000 --inline --watch --devtool eval --progress --colors --hot --content-base examples",
-    "release": "webpack --define increase=patch && webpack -p",
+    "release": "npm run esLint:start && npm run test && webpack --define increase=patch && webpack -p",
     "test": "node ./node_modules/karma/bin/karma start"
   },
   "ignore": [
