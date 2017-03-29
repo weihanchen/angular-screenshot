@@ -200,6 +200,7 @@ const screenshot = () => {
       bindToController: true
    };
 };
+
 /**
  * @ngdoc directive
  * @name screenshot
