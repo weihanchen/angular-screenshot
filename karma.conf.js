@@ -3,7 +3,11 @@ const webpackConfig = require('./webpack.config'),
    generateJsonPlugin = require('generate-json-webpack-plugin');
 webpackConfig.devtool = 'source-map';
 webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof generateJsonPlugin));
-
+// webpackConfig.module.postLoaders = [{
+//    test: /\.js$/,
+//    exclude: /(test|node_modules|bower_components)\//,
+//    loader: 'istanbul-instrumenter'
+// }];
 module.exports = (config) => {
    const configuration = {
       basePath: '',
@@ -18,12 +22,13 @@ module.exports = (config) => {
          'karma-phantomjs-launcher',
          'karma-mocha',
          'karma-mocha-reporter',
+         'karma-sourcemap-loader',
          require("karma-coverage"),
          require("karma-coveralls"),
          require("karma-webpack")
       ],
       preprocessors: {
-         'test/index.js': ['webpack', 'coverage']
+         'test/index.js': ['webpack', 'sourcemap']
       },
       webpack: webpackConfig,
       webpackMiddleware: {

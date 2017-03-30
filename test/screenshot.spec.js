@@ -2,6 +2,7 @@
 import '../src/angular-screenshot';
 
 describe('screenshot directive', function () {
+   const toolboxClass = '.screenshot-toolbox';
    let $compile, $rootScope;
    beforeEach(() => {
       window.module('angular-screenshot');
@@ -10,6 +11,15 @@ describe('screenshot directive', function () {
          $rootScope = _$rootScope_;
       });
    });
+
+   const autoDragSection = (canvasSelector) => {
+      const offset = canvasSelector.offset();
+      const startX = offset.left;
+      const startY = offset.top;
+      const endX = startX + (canvasSelector.width() / 2);
+      const endY = startY + (canvasSelector.height() / 2);
+      return dragSection(canvasSelector[0], startX, startY, endX, endY);
+   };
 
    const dragSection = (canvas, startX, startY, endX, endY) => {
       const mousedown = document.createEvent("MouseEvents");
@@ -52,6 +62,7 @@ describe('screenshot directive', function () {
          scope.isOpen = false;
          scope.$digest();
          body.find(element).remove();
+         body.find(toolboxClass).remove();
       });
       it('does not rendered the canvas when isOpen = false', (done) => {
          //Arrange
@@ -103,19 +114,33 @@ describe('screenshot directive', function () {
          scope.isOpen = true;
          //Act/Assert
          scope.$digest();
-         waitFor(100)
+         waitFor()
             .then(() => {
                const canvasSelector = getChildSelector(body, 'canvas');
-               const offset = canvasSelector.offset();
-               const startX = offset.left;
-               const startY = offset.top;
-               const endX = startX + (canvasSelector.width() / 2);
-               const endY = startY + (canvasSelector.height() / 2);
-               return dragSection(canvasSelector[0], startX, startY, endX, endY);
+               return autoDragSection(canvasSelector);
             })
             .then(() => {
-               const toolboxSelector = getChildSelector(body, '.screenshot-toolbox');
+               const toolboxSelector = getChildSelector(body, toolboxClass);
                expect(toolboxSelector.length).toBeGreaterThan(0);
+               done();
+            });
+      });
+
+      it('should not rendered the toolbox when trigger the cancel', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return autoDragSection(canvasSelector);
+            })
+            .then(() => waitFor())
+            .then(() => {
+               screenshotCtrl.cancel();
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
                done();
             });
       });
