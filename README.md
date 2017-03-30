@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/weihanchen/angular-screenshot.svg?branch=master)](https://travis-ci.org/weihanchen/angular-screenshot)
 
+[![npm](https://img.shields.io/npm/v/npm.svg)](https://img.shields.io/npm/v/angular-screenshot.svg?style=flat)
+
 Angular screenshot in directive for screen capture.
 
 Check out the homepage at [https://weihanchen.github.io/angular-screenshot/](https://weihanchen.github.io/angular-screenshot/)
