@@ -1,6 +1,7 @@
 # angular-screenshot
 
 [![Build Status](https://travis-ci.org/weihanchen/angular-screenshot.svg?branch=master)](https://travis-ci.org/weihanchen/angular-screenshot)
+[![dependencies Status](https://david-dm.org/weihanchen/angular-screenshot/status.svg)](https://david-dm.org/weihanchen/angular-screenshot)
 [![npm](https://img.shields.io/npm/v/angular-screenshot.svg?style=flat)](https://img.shields.io/npm/v/angular-screenshot.svg?style=flat)
 
 Angular screenshot in directive for screen capture.
