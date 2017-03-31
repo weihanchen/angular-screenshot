@@ -169,7 +169,7 @@ describe('screenshot directive', function () {
                const toolboxSelector = getChildSelector(body, toolboxClass);
                const canvasOffset = canvasSelector.offset();
                const toolboxOffset = toolboxSelector.offset();
-               const toolboxHeight = toolboxSelector[0].clientHeight;
+               const toolboxHeight = toolboxSelector.height();
                expect(canvasOffset.left).toEqual(toolboxOffset.left);
                expect(canvasOffset.top).toEqual(Math.abs(toolboxOffset.top - toolboxHeight));
                done();
