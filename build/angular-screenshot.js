@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.1.2 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.1.3 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -3469,7 +3469,8 @@ var screenshot = function screenshot() {
          var zMax = 0;
          angular.element('body *').each(function () {
             var zIndex = angular.element(this).css('zIndex');
-            if (zIndex > zMax) {
+            zIndex = parseInt(zIndex, 10);
+            if (zIndex && zIndex > zMax) {
                zMax = zIndex;
             }
          });
@@ -3613,6 +3614,7 @@ var screenshot = function screenshot() {
       bindToController: true
    };
 };
+
 /**
  * @ngdoc directive
  * @name screenshot
