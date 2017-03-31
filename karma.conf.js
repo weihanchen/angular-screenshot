@@ -28,7 +28,7 @@ module.exports = (config) => {
          require("karma-webpack")
       ],
       preprocessors: {
-         'test/index.js': ['webpack', 'sourcemap']
+         'test/index.js': ['webpack', 'sourcemap', 'coverage']
       },
       webpack: webpackConfig,
       webpackMiddleware: {

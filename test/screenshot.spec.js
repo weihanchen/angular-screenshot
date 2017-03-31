@@ -12,12 +12,21 @@ describe('screenshot directive', function () {
       });
    });
 
-   const autoDragSection = (canvasSelector) => {
+   const dragLeftTopToRightBottom = (canvasSelector) => {
       const offset = canvasSelector.offset();
       const startX = offset.left;
       const startY = offset.top;
       const endX = startX + (canvasSelector.width() / 2);
       const endY = startY + (canvasSelector.height() / 2);
+      return dragSection(canvasSelector[0], startX, startY, endX, endY);
+   };
+
+   const dragRightBottomToLeftTop = (canvasSelector) => {
+      const offset = canvasSelector.offset();
+      const endX = offset.left;
+      const endY = offset.top;
+      const startX = endX + (canvasSelector.width() / 2);
+      const startY = endY + (canvasSelector.height() / 2);
       return dragSection(canvasSelector[0], startX, startY, endX, endY);
    };
 
@@ -40,29 +49,48 @@ describe('screenshot directive', function () {
       });
    };
 
+   const findMaxZindex = () => {
+      let zMax = 0;
+      angular.element('body *').each(function () {
+         let zIndex = angular.element(this).css('zIndex');
+         zIndex = parseInt(zIndex, 10);
+         if (zIndex && zIndex > zMax) {
+            zMax = zIndex;
+         }
+      });
+      return zMax;
+   };
+
    const getChildSelector = (element, childName) => element.find(childName);
 
    const waitFor = (timespan) => new Promise((resolve) => setTimeout(() => resolve(), timespan));
 
    describe('basic features', () => {
       let scope,
+         absoluteElement,
          element,
          body,
          screenshotCtrl;
       beforeEach(() => {
          scope = $rootScope.$new();
          element = angular.element('<screenshot is-open="isOpen"><div>Hello World</div></screenshot>');
+         absoluteElement = angular.element('<div></div>');
          $compile(element)(scope);
          scope.$digest();
          screenshotCtrl = element.isolateScope().screenshotCtrl;
          body = angular.element(document.body);
+         body.width(500);
+         body.height(500);
+         body.append(absoluteElement);
          body.append(element);
+         absoluteElement.css({ top: body.height() / 2, left: body.width() / 2, position: 'absolute', zIndex: 1 });
       });
       afterEach(() => {
          scope.isOpen = false;
          scope.$digest();
          body.find(element).remove();
          body.find(toolboxClass).remove();
+         body.find(absoluteElement).remove();
       });
       it('does not rendered the canvas when isOpen = false', (done) => {
          //Arrange
@@ -117,11 +145,33 @@ describe('screenshot directive', function () {
          waitFor()
             .then(() => {
                const canvasSelector = getChildSelector(body, 'canvas');
-               return autoDragSection(canvasSelector);
+               return dragLeftTopToRightBottom(canvasSelector);
             })
             .then(() => {
                const toolboxSelector = getChildSelector(body, toolboxClass);
                expect(toolboxSelector.length).toBeGreaterThan(0);
+               done();
+            });
+      });
+
+      it('should rendered the toolbox when drag with section from right bottom to left top', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragRightBottomToLeftTop(canvasSelector);
+            })
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const canvasOffset = canvasSelector.offset();
+               const toolboxOffset = toolboxSelector.offset();
+               const toolboxHeight = toolboxSelector[0].clientHeight;
+               expect(canvasOffset.left).toEqual(toolboxOffset.left);
+               expect(canvasOffset.top).toEqual(Math.abs(toolboxOffset.top - toolboxHeight));
                done();
             });
       });
@@ -134,13 +184,35 @@ describe('screenshot directive', function () {
          waitFor()
             .then(() => {
                const canvasSelector = getChildSelector(body, 'canvas');
-               return autoDragSection(canvasSelector);
+               return dragLeftTopToRightBottom(canvasSelector);
             })
             .then(() => waitFor())
             .then(() => {
                screenshotCtrl.cancel();
                const toolboxSelector = getChildSelector(body, toolboxClass);
                expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
+      });
+
+      it('should toolbox\'s z-index greater than canvas and origin max z-index', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         const originMaxZindex = findMaxZindex();
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const canvasZindex = canvasSelector.css('z-index');
+               const toolboxZindex = toolboxSelector.css('z-index');
+               expect(toolboxZindex).toBeGreaterThan(canvasZindex);
+               expect(canvasZindex).toBeGreaterThan(originMaxZindex);
                done();
             });
       });

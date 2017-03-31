@@ -59,8 +59,9 @@ const screenshot = () => {
       const findMaxZindex = () => {
          let zMax = 0;
          angular.element('body *').each(function () {
-            const zIndex = angular.element(this).css('zIndex');
-            if (zIndex > zMax) {
+            let zIndex = angular.element(this).css('zIndex');
+            zIndex = parseInt(zIndex, 10);
+            if (zIndex && zIndex > zMax) {
                zMax = zIndex;
             }
          });
