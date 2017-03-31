@@ -1,13 +1,17 @@
 'use strict';
 const webpackConfig = require('./webpack.config'),
+   path = require('path'),
    generateJsonPlugin = require('generate-json-webpack-plugin');
 webpackConfig.devtool = 'source-map';
 webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof generateJsonPlugin));
-// webpackConfig.module.postLoaders = [{
-//    test: /\.js$/,
-//    exclude: /(test|node_modules|bower_components)\//,
-//    loader: 'istanbul-instrumenter'
-// }];
+webpackConfig.module.loaders.push({
+   test: /\.js$/,
+   include: path.resolve('src/'),
+   loader: 'istanbul-instrumenter-loader',
+   query: {
+      esModules: true
+   }
+});
 module.exports = (config) => {
    const configuration = {
       basePath: '',
@@ -18,6 +22,7 @@ module.exports = (config) => {
          'node_modules/angular-mocks/angular-mocks.js',
          { pattern: 'test/index.js', watched: false }],
       plugins: [
+         'karma-coverage-istanbul-reporter',
          'karma-jasmine',
          'karma-phantomjs-launcher',
          'karma-mocha',
@@ -28,17 +33,36 @@ module.exports = (config) => {
          require("karma-webpack")
       ],
       preprocessors: {
-         'test/index.js': ['webpack', 'sourcemap', 'coverage']
+         'test/index.js': ['coverage', 'webpack', 'sourcemap']
       },
       webpack: webpackConfig,
       webpackMiddleware: {
          stats: "errors-only"
       },
-      coverageReporter: {
-         type: 'lcov',
-         dir: 'coverage/'
+      coverageIstanbulReporter: {
+
+         // reports can be any that are listed here: https://github.com/istanbuljs/istanbul-reports/tree/590e6b0089f67b723a1fdf57bc7ccc080ff189d7/lib
+         reports: ['html', 'lcovonly', 'text-summary'],
+
+         // base output directory. If you include %browser% in the path it will be replaced with the karma browser name
+         dir: path.join(__dirname, 'coverage'),
+
+         // if using webpack and pre-loaders, work around webpack breaking the source path
+         fixWebpackSourcePaths: true,
+
+         // Most reporters accept additional config options. You can pass these through the `report-config` option
+         'report-config': {
+
+            // all options available at: https://github.com/istanbuljs/istanbul-reports/blob/590e6b0089f67b723a1fdf57bc7ccc080ff189d7/lib/html/index.js#L135-L137
+            html: {
+               // outputs the report in ./coverage/html
+               subdir: 'html'
+            }
+
+         }
       },
-      reporters: ['mocha', 'coverage'],
+
+      reporters: ['mocha', 'coverage-istanbul'],
       mochaReporter: {
          output: 'full'
       },
@@ -48,7 +72,7 @@ module.exports = (config) => {
       colors: true,
       // level of logging
       // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-      logLevel: config.LOG_DEBUG,
+      logLevel: config.LOG_INFO,
       // enable / disable watching file and executing tests whenever any file changes
       autoWatch: true,
       // start these browsers
