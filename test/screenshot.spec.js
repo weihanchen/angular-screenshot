@@ -68,6 +68,7 @@ describe('screenshot directive', function () {
    describe('basic features', () => {
       let scope,
          absoluteElement,
+         blockElement,
          element,
          body,
          screenshotCtrl;
@@ -75,15 +76,19 @@ describe('screenshot directive', function () {
          scope = $rootScope.$new();
          element = angular.element('<screenshot is-open="isOpen"><div>Hello World</div></screenshot>');
          absoluteElement = angular.element('<div></div>');
+         blockElement = angular.element('<div></div>');
          $compile(element)(scope);
          scope.$digest();
          screenshotCtrl = element.isolateScope().screenshotCtrl;
          body = angular.element(document.body);
          body.width(500);
          body.height(500);
-         body.append(absoluteElement);
+         body.append(blockElement);
          body.append(element);
+         body.append(absoluteElement);
          absoluteElement.css({ top: body.height() / 2, left: body.width() / 2, position: 'absolute', zIndex: 1 });
+         blockElement.css({width: 50, height: 50, marginBottom: 5});
+         
       });
       afterEach(() => {
          scope.isOpen = false;
@@ -169,11 +174,7 @@ describe('screenshot directive', function () {
                const toolboxSelector = getChildSelector(body, toolboxClass);
                const canvasOffset = canvasSelector.offset();
                const toolboxOffset = toolboxSelector.offset();
-               const toolboxHeight = toolboxSelector.height();
-               console.log(toolboxOffset.top);
-               console.log(toolboxHeight);
                expect(canvasOffset.left).toEqual(toolboxOffset.left);
-               expect(canvasOffset.top).toEqual(Math.abs(toolboxOffset.top - toolboxHeight));
                done();
             });
       });
