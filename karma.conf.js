@@ -28,12 +28,12 @@ module.exports = (config) => {
          'karma-mocha',
          'karma-mocha-reporter',
          'karma-sourcemap-loader',
+         require('karma-coveralls'),
          require("karma-coverage"),
-         require("karma-coveralls"),
          require("karma-webpack")
       ],
       preprocessors: {
-         'test/index.js': ['coverage', 'webpack', 'sourcemap']
+         'test/index.js': ['webpack', 'sourcemap']
       },
       webpack: webpackConfig,
       webpackMiddleware: {
@@ -61,8 +61,12 @@ module.exports = (config) => {
 
          }
       },
-
-      reporters: ['mocha', 'coverage-istanbul'],
+      // coverageReporter: {
+      //    reporters: [
+      //       { type: 'lcov', dir: 'coverage' }
+      //    ],
+      // },
+      reporters: ['mocha', 'coverage', 'coveralls', 'coverage-istanbul'],
       mochaReporter: {
          output: 'full'
       },
