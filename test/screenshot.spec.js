@@ -170,6 +170,8 @@ describe('screenshot directive', function () {
                const canvasOffset = canvasSelector.offset();
                const toolboxOffset = toolboxSelector.offset();
                const toolboxHeight = toolboxSelector.height();
+               console.log(toolboxOffset.top);
+               console.log(toolboxHeight);
                expect(canvasOffset.left).toEqual(toolboxOffset.left);
                expect(canvasOffset.top).toEqual(Math.abs(toolboxOffset.top - toolboxHeight));
                done();
