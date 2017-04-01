@@ -48,7 +48,6 @@ const downloadCanvas = (canvas, filename) => {
    downloadLink.click();
    downloadLink.remove();
    DOMURL.revokeObjectURL(downloadUrl);
-
    return Promise.resolve(canvas);
 };
 

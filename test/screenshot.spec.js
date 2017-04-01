@@ -3,12 +3,13 @@ import '../src/angular-screenshot';
 
 describe('screenshot directive', function () {
    const toolboxClass = '.screenshot-toolbox';
-   let $compile, $rootScope;
+   let $compile, $rootScope, $timeout;
    beforeEach(() => {
       window.module('angular-screenshot');
-      inject(function (_$compile_, _$rootScope_) {
+      inject(function (_$compile_, _$rootScope_, _$timeout_) {
          $compile = _$compile_;
          $rootScope = _$rootScope_;
+         $timeout = _$timeout_;
       });
    });
 
@@ -87,8 +88,8 @@ describe('screenshot directive', function () {
          body.append(element);
          body.append(absoluteElement);
          absoluteElement.css({ top: body.height() / 2, left: body.width() / 2, position: 'absolute', zIndex: 1 });
-         blockElement.css({width: 50, height: 50, marginBottom: 5});
-         
+         blockElement.css({ width: 50, height: 50, marginBottom: 5 });
+
       });
       afterEach(() => {
          scope.isOpen = false;
@@ -96,6 +97,7 @@ describe('screenshot directive', function () {
          body.find(element).remove();
          body.find(toolboxClass).remove();
          body.find(absoluteElement).remove();
+         body.find(blockElement).remove();
       });
       it('does not rendered the canvas when isOpen = false', (done) => {
          //Arrange
@@ -198,6 +200,27 @@ describe('screenshot directive', function () {
             });
       });
 
+      it('should not rendered the toolbox when trigger the download', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => waitFor())
+            .then(() => screenshotCtrl.download())
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
+      });
+
       it('should toolbox\'s z-index greater than canvas and origin max z-index', (done) => {
          //Arrange
          scope.isOpen = true;
@@ -216,6 +239,56 @@ describe('screenshot directive', function () {
                const toolboxZindex = toolboxSelector.css('z-index');
                expect(toolboxZindex).toBeGreaterThan(canvasZindex);
                expect(canvasZindex).toBeGreaterThan(originMaxZindex);
+               done();
+            });
+      });
+   });
+
+   describe('advance features', () => {
+      let scope,
+         targetSelector,
+         elementSelector,
+         body,
+         screenshotCtrl;
+
+      beforeEach(() => {
+         scope = $rootScope.$new();
+         elementSelector = angular.element('<screenshot target="{{target}}" is-open="isOpen"></screenshot>');
+         targetSelector = angular.element('<div id="target">Hello World, I am target</div>');
+         $compile(elementSelector)(scope);
+         scope.$digest();
+         screenshotCtrl = elementSelector.isolateScope().screenshotCtrl;
+         body = angular.element(document.body);
+         body.width(500);
+         body.height(500);
+         body.append(elementSelector);
+         body.append(targetSelector);
+         targetSelector.css({ width: 100, height: 100 });
+      });
+
+      afterEach(() => {
+         scope.isOpen = false;
+         scope.$digest();
+         body.find(elementSelector).remove();
+         body.find(targetSelector).remove();
+         body.find(toolboxClass).remove();
+      });
+
+      it('should rendered the canvas on target position', (done) => {
+         //Arrange
+         scope.target = '#target';
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               const canvasOffset = canvasSelector.offset();
+               const targetOffset = targetSelector.offset();
+               expect(canvasOffset.top).toEqual(targetOffset.top);
+               expect(canvasOffset.left).toEqual(targetOffset.left);
+               expect(screenshotCtrl.target).toEqual(scope.target);
                done();
             });
       });

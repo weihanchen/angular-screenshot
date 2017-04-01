@@ -82,6 +82,16 @@ module.exports = (config) => {
       // start these browsers
       // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
       browsers: ['PhantomJS'],
+      phantomjsLauncher: {
+         // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+         exitOnResourceError: true,
+         base: 'PhantomJS',
+         flags: [
+            '--web-security=false',
+            '--load-images=true',
+            '--ignore-ssl-errors=true'
+         ]
+      },
       // If browser does not capture in given timeout [ms], kill it
       captureTimeout: 60000,
       // Continuous Integration mode

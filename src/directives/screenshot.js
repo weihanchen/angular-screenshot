@@ -44,7 +44,8 @@ const screenshot = () => {
                   return domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
                })
                .then(canvas => domprocess.downloadCanvas(canvas, self.filename))
-               .then(domprocess.remove);
+               .then(domprocess.remove)
+               .catch(error => console.error(error));
          });
 
          //  domcapture.getCanvas(element)
