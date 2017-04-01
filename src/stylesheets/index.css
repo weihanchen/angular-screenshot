@@ -1,0 +1,6 @@
+/* shared */
+@import 'shared/colors.css';
+@import 'shared/typography.css';
+
+/* components */
+@import 'components/screenshot-toolbox.css';

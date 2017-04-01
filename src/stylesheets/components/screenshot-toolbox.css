@@ -1,33 +1,32 @@
-@import "./variables";
+@custom-selector :--enter :hover, :focus;
 
 .screenshot-toolbox {
-
-	button {
-		margin: $toolbox--btn-gap;
+	& button {
+		margin: var(--toolbox-btn-gap);
 	}
 
-	.btn {
+	& .btn {
 		 position: relative;
 		 padding: 0.2em 0.4em;;
 		 overflow: hidden;
 		 border-width: 0;
 		 outline: none;
 		 border-radius: 0.2em;
-		 box-shadow: 0 0.1em 0.2em $color-darkgray;
-		 background-color: $color-lightgray;
-		 color: $color-darkgray;
+		 box-shadow: 0 0.1em 0.2em var(--color-darkgray);
+		 background-color: var(--color-lightgray);
+		 color: var(--color-darkgray);
 		 transition: background-color .3s;
 	}
 
-	.btn:hover, .btn:focus {
-		background: $color-gray;
+	& .btn:--enter {
+		background: var(--color-gray);
 	}
 
-	.btn > * {
+	& .btn > * {
 		position: relative;
 	}
 
-	.btn:before {
+	& .btn:before {
 		 content: "";
 		 position: absolute;
 		 top: 50%;
@@ -36,7 +35,7 @@
 		 width: 0;
 		 padding-top: 0;
 		 border-radius: 100%;
-		 background-color: $color-gray-opacity;
+		 background-color: var(--color-gray-opacity);
   		 -webkit-transform: translate(-50%, -50%);
   		 -moz-transform: translate(-50%, -50%);
   		 -ms-transform: translate(-50%, -50%);
@@ -44,18 +43,18 @@
   		 transform: translate(-50%, -50%);
 	}
 
-	.btn:active:before {
+	& .btn:active:before {
 		width: 120%;
 		padding-top: 120%;
 		transition: width .2s ease-out, padding-top .2s ease-out;
 	}
 
-	.btn-navy {
-      background-color: $color-navy;
+	& .btn-navy {
+      background-color: var(--color-navy);
    }
 
-   .btn-navy:hover, .btn.red:focus {
-      background-color: $color-darknavy;
+   & .btn-navy:--enter {
+      background-color: var(--color-darknavy);
    }
 }
 

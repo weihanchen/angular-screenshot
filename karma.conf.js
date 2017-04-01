@@ -4,7 +4,7 @@ const webpackConfig = require('./webpack.config'),
    generateJsonPlugin = require('generate-json-webpack-plugin');
 webpackConfig.devtool = 'source-map';
 webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof generateJsonPlugin));
-webpackConfig.module.loaders.push({
+webpackConfig.module.rules.push({
    test: /\.js$/,
    include: path.resolve('src/'),
    loader: 'istanbul-instrumenter-loader',

@@ -14,7 +14,7 @@ const argv = process.argv,
    filename = 'angular-screenshot' + (isProduction ? '.min' : ''),
    increase = (argv.filter(arg => arg.match(/^increase=.+$/))[0] || '').replace('increase=', ''),
    directivePath = path.resolve(__dirname, './src/angular-screenshot.js'),
-   stylePath = path.resolve(__dirname, './src/stylesheets/main.scss'),
+   stylePath = path.resolve(__dirname, './src/stylesheets/index.css'),
    buildPath = path.resolve(__dirname, './build');
 
 //sync info with package.json
@@ -37,16 +37,28 @@ module.exports = {
       extensions: ['.js', '.scss']
    },
    module: {
-      loaders: [{
+      rules: [{
          test: /\.js$/,
          exclude: /(node_modules|bower_components)/,
          loaders: ['babel-loader?presets[]=es2015']
       }, {
-         test: /\.scss$/,
-         loader: extractTextPlugin.extract({ use:[ 'css-loader', 'sass-loader'], fallback: 'style-loader' })
-      }, {
-         test: /jquery(\.min)?\.js$/,
-         loader: 'expose?jQuery'
+         test: /\.css$/,
+         exclude: /(node_modules|bower_components)/,
+         loader: extractTextPlugin.extract({
+            use: [{
+               loader: 'css-loader?importLoaders=1'
+            }, {
+               loader: 'postcss-loader',
+               options: {
+                  plugins: () => [
+                     require('postcss-import')({}),
+                     require('postcss-cssnext')({
+                        browsers: ['last 2 versions', '> 5%']
+                     })
+                  ]
+               }
+            }], fallback: 'style-loader'
+         })
       }]
    },
    plugins: [
@@ -60,12 +72,12 @@ module.exports = {
          { from: 'node_modules/bootstrap/dist/css/bootstrap.min.css', to: '../examples/css/plugins' },
          { from: 'node_modules/bootstrap/dist/js/bootstrap.min.js', to: '../examples/js/plugins' },
          { from: 'node_modules/bootstrap/dist/fonts', to: '../examples/css/fonts' },
-         { from: 'node_modules/font-awesome/fonts', to: '../examples/css/fonts'},
-         { from: 'node_modules/font-awesome/css/font-awesome.min.css', to: '../examples/css/plugins'},
-         { from: 'node_modules/highlightjs/styles/default.css', to: '../examples/css/plugins'},
-         { from: 'node_modules/highlightjs/highlight.pack.min.js', to: '../examples/js/plugins'},
-         { from: 'node_modules/bootstrap-material-design/dist/css/bootstrap-material-design.min.css', to: '../examples/css/plugins'},
-         { from : 'node_modules/bootstrap-material-design/dist/css/ripples.min.css', to: '../examples/css/plugins'}
+         { from: 'node_modules/font-awesome/fonts', to: '../examples/css/fonts' },
+         { from: 'node_modules/font-awesome/css/font-awesome.min.css', to: '../examples/css/plugins' },
+         { from: 'node_modules/highlightjs/styles/default.css', to: '../examples/css/plugins' },
+         { from: 'node_modules/highlightjs/highlight.pack.min.js', to: '../examples/js/plugins' },
+         { from: 'node_modules/bootstrap-material-design/dist/css/bootstrap-material-design.min.css', to: '../examples/css/plugins' },
+         { from: 'node_modules/bootstrap-material-design/dist/css/ripples.min.css', to: '../examples/css/plugins' }
       ])
    ]
 };
