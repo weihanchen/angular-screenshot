@@ -1,6 +1,6 @@
 {
   "name": "angular-screenshot",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Angular screenshot in directive for screen capture.",
   "main": "dist/angular-screenshot.js",
   "repository": {
