@@ -253,7 +253,7 @@ describe('screenshot directive', function () {
 
       beforeEach(() => {
          scope = $rootScope.$new();
-         elementSelector = angular.element('<screenshot target="{{target}}" is-open="isOpen"></screenshot>');
+         elementSelector = angular.element('<screenshot target="{{target}}" api="api" toolbox-options="toolboxOptions" is-open="isOpen"></screenshot>');
          targetSelector = angular.element('<div id="target">Hello World, I am target</div>');
          $compile(elementSelector)(scope);
          scope.$digest();
@@ -291,6 +291,31 @@ describe('screenshot directive', function () {
                expect(screenshotCtrl.target).toEqual(scope.target);
                done();
             });
+      });
+
+      it('should rendered the toolbox with toolboxOptions', (done) => {
+         //Arrange
+         scope.target = '#target';
+         scope.toolboxOptions = {
+            cancelText: 'cancel me',
+            downloadText: 'download me'
+         };
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const cancelSelector = toolboxSelector.find(`button:contains(${scope.toolboxOptions.cancelText})`);
+               const downloadSelector = toolboxSelector.find(`button:contains(${scope.toolboxOptions.downloadText})`);
+               expect(cancelSelector.length).toBeGreaterThan(0);
+               expect(downloadSelector.length).toBeGreaterThan(0);
+               done();
+            });     
       });
    });
 });
