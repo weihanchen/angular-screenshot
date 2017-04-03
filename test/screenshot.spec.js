@@ -244,7 +244,7 @@ describe('screenshot directive', function () {
       });
    });
 
-   describe('advance features', () => {
+   describe('custom options', () => {
       let scope,
          targetSelector,
          elementSelector,
@@ -254,13 +254,12 @@ describe('screenshot directive', function () {
       beforeEach(() => {
          scope = $rootScope.$new();
          elementSelector = angular.element('<screenshot target="{{target}}" api="api" toolbox-options="toolboxOptions" is-open="isOpen"></screenshot>');
-         targetSelector = angular.element('<div id="target">Hello World, I am target</div>');
+         targetSelector = angular.element('<div id="target" style="background-color: transparent;">Hello World, I am target</div>');
          $compile(elementSelector)(scope);
          scope.$digest();
          screenshotCtrl = elementSelector.isolateScope().screenshotCtrl;
          body = angular.element(document.body);
-         body.width(500);
-         body.height(500);
+         body.css({width: 500, height: 500, backgroundColor: '#45bd96'});
          body.append(elementSelector);
          body.append(targetSelector);
          targetSelector.css({ width: 100, height: 100 });

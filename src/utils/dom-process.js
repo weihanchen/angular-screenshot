@@ -58,7 +58,7 @@ const getStyle = (element, property) =>{
 
 const isTransparent = (element) => {
    const backgroundColor = window.getComputedStyle(element).backgroundColor;
-   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0,0,0,0)';
+   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0, 0, 0, 0)';
 };
 
 const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) => {
