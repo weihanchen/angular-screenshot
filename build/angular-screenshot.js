@@ -3376,7 +3376,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var screenshotToolbox = function screenshotToolbox() {
    var linkFn = function linkFn(scope, element, attrs, screenshotCtrl) {
-      var template = '<div>' + element.children().html() + '</div>';
+      var template = '<div class="screenshot-toolbox">' + element.children().html() + '</div>';
       screenshotCtrl.setTemplate(template, scope);
       element.remove();
    };
@@ -3453,7 +3453,9 @@ var screenshot = function screenshot() {
                return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
             }).then(function (canvas) {
                return _utils.domprocess.downloadCanvas(canvas, self.filename);
-            }).then(_utils.domprocess.remove);
+            }).then(_utils.domprocess.remove).catch(function (error) {
+               return console.error(error);
+            });
          });
 
          //  domcapture.getCanvas(element)
@@ -3695,7 +3697,6 @@ var downloadCanvas = function downloadCanvas(canvas, filename) {
    downloadLink.click();
    downloadLink.remove();
    DOMURL.revokeObjectURL(downloadUrl);
-
    return Promise.resolve(canvas);
 };
 
@@ -3706,7 +3707,7 @@ var getStyle = function getStyle(element, property) {
 
 var isTransparent = function isTransparent(element) {
    var backgroundColor = window.getComputedStyle(element).backgroundColor;
-   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0,0,0,0)';
+   return backgroundColor === 'transparent' || backgroundColor === '' || backgroundColor === 'rgba(0, 0, 0, 0)';
 };
 
 var listenInteractiveCanvas = function listenInteractiveCanvas(canvas, rectBackground, mouseupListener, mousedownListener, contextmenuListener) {

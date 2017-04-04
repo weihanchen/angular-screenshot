@@ -259,7 +259,7 @@ describe('screenshot directive', function () {
          scope.$digest();
          screenshotCtrl = elementSelector.isolateScope().screenshotCtrl;
          body = angular.element(document.body);
-         body.css({width: 500, height: 500, backgroundColor: '#45bd96'});
+         body.css({ width: 500, height: 500, backgroundColor: '#45bd96' });
          body.append(elementSelector);
          body.append(targetSelector);
          targetSelector.css({ width: 100, height: 100 });
@@ -279,7 +279,7 @@ describe('screenshot directive', function () {
          scope.isOpen = true;
          //Act/Assert
          scope.$digest();
-         
+
          waitFor()
             .then(() => {
                const canvasSelector = getChildSelector(body, 'canvas');
@@ -314,7 +314,118 @@ describe('screenshot directive', function () {
                expect(cancelSelector.length).toBeGreaterThan(0);
                expect(downloadSelector.length).toBeGreaterThan(0);
                done();
-            });     
+            });
+      });
+   });
+
+   describe('custom toolbox template', () => {
+      const customTlBtnText = {
+         cancel: 'cancel me!',
+         download: 'download me!'
+      };
+      let elementSelector,
+         scope,
+         body;
+      beforeEach(() => {
+         scope = $rootScope.$new();
+         scope.api;
+         elementSelector = angular.element(`
+         <screenshot api="api" is-open="isOpen">
+            <screenshot-toolbox>
+               <button ng-click="downloadMe()">${customTlBtnText.download}</button>
+               <button ng-click="cancelMe()">${customTlBtnText.cancel}</button>
+            </screenshot-toolbox>
+            <div>Hello World!</div>
+         </screenshot>`);
+
+         $compile(elementSelector)(scope);
+         scope.$digest();
+         scope.downloadMe = () => {
+            scope.api.download();
+         };
+         scope.cancelMe = () => {
+            scope.api.cancel();
+         };
+         body = angular.element(document.body);
+         body.css({ width: 500, height: 500 });
+         body.append(elementSelector);
+      });
+      afterEach(() => {
+         scope.isOpen = false;
+         scope.$digest();
+         body.find(elementSelector).remove();
+         body.find(toolboxClass).remove();
+      });
+
+      it('should rendered the custom toolbox template', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const cancelSelector = toolboxSelector.find(`button:contains(${customTlBtnText.cancel})`);
+               const downloadSelector = toolboxSelector.find(`button:contains(${customTlBtnText.download})`);
+               expect(cancelSelector.length).toBeGreaterThan(0);
+               expect(downloadSelector.length).toBeGreaterThan(0);
+               done();
+            });
+      });
+
+      it('should trigger the cancel event on custom toolbox', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const cancelSelector = toolboxSelector.find(`button:contains(${customTlBtnText.cancel})`);
+               cancelSelector.trigger('click');
+            })
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
+      });
+
+      it('should trigger the download event on custom toolbox', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const downloadSelector = toolboxSelector.find(`button:contains(${customTlBtnText.download})`);
+               return downloadSelector.click();
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
       });
    });
 });

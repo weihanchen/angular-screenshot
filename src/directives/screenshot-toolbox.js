@@ -1,6 +1,6 @@
 const screenshotToolbox = () => {
    const linkFn = (scope, element, attrs, screenshotCtrl) => {
-      const template = `<div>${element.children().html()}</div>`;
+      const template = `<div class="screenshot-toolbox">${element.children().html()}</div>`;
       screenshotCtrl.setTemplate(template, scope);
       element.remove();
    };

@@ -257,6 +257,27 @@
                                 &lt/screenshot&gt
                             </code>
                         </pre>
+                        controller: 
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.advanceApi;
+                                      self.cancel = cancel;
+                                      self.download = download;
+                                      function cancel() {
+                                          if (self.advanceApi) self.advanceApi.cancel();
+                                       }
+                                       function download() {
+                                          if (self.advanceApi) self.advanceApi.download();
+                                       }
+                                })();
+                            </code>
+                        </pre>
                     </div>
                 </screenshot>
             </div>

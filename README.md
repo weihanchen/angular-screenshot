@@ -100,6 +100,24 @@ Use `screenshot-toolbox` to customize your toolbox, then use expose api to inter
 	</div>
 </screenshot>
 ```
+```javascript
+ 'use strict';
+(function () {
+	angular.module('app', ['angular-screenshot'])
+		.controller('AppController', ['$scope', appController])
+		function appController() {
+			var self = this;
+			self.advanceApi;
+			self.cancel = cancel;
+			self.download = download;
+		function cancel() {
+			if (self.advanceApi) self.advanceApi.cancel();
+		}
+		function download() {
+			if (self.advanceApi) self.advanceApi.download();
+		}
+})();
+```
 
 ## Development scripts
 * `npm run dev`: webpack lite server auto reload on changed.
