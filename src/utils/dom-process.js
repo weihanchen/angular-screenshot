@@ -1,5 +1,5 @@
 'use strict';
-const DOMURL = window.URL || window.webkitURL || window;
+const DOMURL = window.URL;
 const appendToBody = (element) => {
    document.body.appendChild(element);
    return Promise.resolve(element);
