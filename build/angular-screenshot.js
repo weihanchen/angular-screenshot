@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.1.7 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.2.0 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -3416,7 +3416,7 @@ var _domToImage2 = _interopRequireDefault(_domToImage);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var screenshot = function screenshot() {
-   var screenshotController = function screenshotController($scope, $element, $compile, $timeout) {
+   var screenshotController = function screenshotController($scope, $element, $compile, $timeout, $window) {
       var colors = { gray: '#898b89', lightGray: '#e6e3e3' },
           hightLevelZindex = {
          top: 1,
@@ -3556,6 +3556,23 @@ var screenshot = function screenshot() {
             return self.interactiveCanvas = canvas;
          });
       };
+
+      var resizeCanvas = function resizeCanvas() {
+         if (!self.interactiveCanvas) return;
+         var elementSelector = getElementSelector();
+         var boudingClientRect = elementSelector[0].getBoundingClientRect();
+         var width = boudingClientRect.width;
+         var height = boudingClientRect.height;
+         var offset = elementSelector.offset();
+         var left = offset.left;
+         var top = offset.top;
+         self.interactiveCanvas.width = width;
+         self.interactiveCanvas.height = height;
+         _utils.domprocess.setCanvasStyle(self.interactiveCanvas, left, top, colors.gray, hightLevelZindex.second).then(function () {
+            return _utils.domprocess.remove(self.toolboxElement);
+         });
+      };
+
       /**
        *
        * @param {string} template - allow screenshot-toolbox directive setting with
@@ -3602,6 +3619,7 @@ var screenshot = function screenshot() {
          self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
          self.filename = newVal.filename ? newVal.filename : self.filename;
       });
+      angular.element($window).bind('resize', resizeCanvas);
    };
    return {
       restrict: 'AE',
@@ -3611,7 +3629,7 @@ var screenshot = function screenshot() {
          toolboxOptions: '=?',
          api: '=?'
       },
-      controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
+      controller: ['$scope', '$element', '$compile', '$timeout', '$window', screenshotController],
       controllerAs: 'screenshotCtrl',
       bindToController: true
    };
@@ -3645,7 +3663,7 @@ exports.default = screenshot;
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-var DOMURL = window.URL || window.webkitURL || window;
+var DOMURL = window.URL;
 var appendToBody = function appendToBody(element) {
    document.body.appendChild(element);
    return Promise.resolve(element);

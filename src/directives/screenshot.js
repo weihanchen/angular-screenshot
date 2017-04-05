@@ -4,7 +4,7 @@ import {
 } from '../utils';
 import domtoimage from 'dom-to-image';
 const screenshot = () => {
-   const screenshotController = function ($scope, $element, $compile, $timeout) {
+   const screenshotController = function ($scope, $element, $compile, $timeout, $window) {
       const colors = {gray: '#898b89', lightGray: '#e6e3e3'},
          hightLevelZindex = {
             top: 1,
@@ -145,6 +145,22 @@ const screenshot = () => {
             .then(canvas => domprocess.listenInteractiveCanvas(canvas, colors.lightGray, canvasMouseupListener, canvasMousedownListener, canvasContextmenuListener))
             .then(canvas => self.interactiveCanvas = canvas);
       };
+
+      const resizeCanvas = () => {
+         if (!self.interactiveCanvas) return;
+         const elementSelector = getElementSelector();
+         const boudingClientRect = elementSelector[0].getBoundingClientRect();
+         const width = boudingClientRect.width;
+         const height = boudingClientRect.height;
+         const offset = elementSelector.offset();
+         const left = offset.left;
+         const top = offset.top;
+         self.interactiveCanvas.width = width;
+         self.interactiveCanvas.height = height;
+         domprocess.setCanvasStyle(self.interactiveCanvas, left, top, colors.gray, hightLevelZindex.second)
+            .then(() => domprocess.remove(self.toolboxElement));
+      };
+
       /**
        *
        * @param {string} template - allow screenshot-toolbox directive setting with
@@ -188,6 +204,7 @@ const screenshot = () => {
          self.downloadText = newVal.downloadText ? newVal.downloadText : self.downloadText;
          self.filename = newVal.filename ? newVal.filename : self.filename;
       });
+      angular.element($window).bind('resize', resizeCanvas);
    };
    return {
       restrict: 'AE',
@@ -197,7 +214,7 @@ const screenshot = () => {
          toolboxOptions: '=?',
          api: '=?'
       },
-      controller: ['$scope', '$element', '$compile', '$timeout', screenshotController],
+      controller: ['$scope', '$element', '$compile', '$timeout', '$window', screenshotController],
       controllerAs: 'screenshotCtrl',
       bindToController: true
    };

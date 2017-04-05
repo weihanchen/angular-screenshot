@@ -64,6 +64,14 @@ describe('screenshot directive', function () {
 
    const getChildSelector = (element, childName) => element.find(childName);
 
+   const triggerResize = () => {
+       console.log('trigger')
+      const event = document.createEvent('HTMLEvents');
+      event.initEvent('resize', true, false);
+      document.body.dispatchEvent(event);
+      return Promise.resolve();
+   };
+
    const waitFor = (timespan) => new Promise((resolve) => setTimeout(() => resolve(), timespan));
 
    describe('basic features', () => {
@@ -313,6 +321,32 @@ describe('screenshot directive', function () {
                const downloadSelector = toolboxSelector.find(`button:contains(${scope.toolboxOptions.downloadText})`);
                expect(cancelSelector.length).toBeGreaterThan(0);
                expect(downloadSelector.length).toBeGreaterThan(0);
+               done();
+            });
+      });
+
+      it('should reset position and size when resize window', (done) => {
+         //Arrange
+         scope.target = '#target';
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => triggerResize())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const canvasSelector = getChildSelector(body, 'canvas');
+               expect(toolboxSelector.length).toEqual(0);
+               expect(targetSelector.width()).toEqual(canvasSelector.width());
+               expect(targetSelector.height()).toEqual(canvasSelector.height());
+               expect(targetSelector.offset().top).toEqual(canvasSelector.offset().top);
+               expect(targetSelector.offset().left).toEqual(canvasSelector.offset().left);
                done();
             });
       });
