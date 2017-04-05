@@ -1,6 +1,7 @@
 # angular-screenshot
 
 [![Build Status](https://travis-ci.org/weihanchen/angular-screenshot.svg?branch=master)](https://travis-ci.org/weihanchen/angular-screenshot)
+[![Coverage Status](https://coveralls.io/repos/github/weihanchen/angular-screenshot/badge.svg)](https://coveralls.io/github/weihanchen/angular-screenshot)
 [![dependencies Status](https://david-dm.org/weihanchen/angular-screenshot/status.svg)](https://david-dm.org/weihanchen/angular-screenshot)
 [![npm](https://img.shields.io/npm/v/angular-screenshot.svg?style=flat)](https://img.shields.io/npm/v/angular-screenshot.svg?style=flat)
 
@@ -130,7 +131,7 @@ Use `screenshot-toolbox` to customize your toolbox, then use expose api to inter
 
 ## Todos
 * Capture with font can cause some problem, and this bug still trying fix.
-* RWD issue fix.
+* ~~RWD issue fix.~~
 * Add saveas feature.
 
 ## References
