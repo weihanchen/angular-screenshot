@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.2.0 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.3.0 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
