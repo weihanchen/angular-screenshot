@@ -39,15 +39,19 @@ const dataUrlToImage = (url) => new Promise((resolve, reject) => {
    image.src = url;
 });
 
-const downloadCanvas = (canvas, filename) => {
-   const downloadUrl = canvas.toDataURL('image/png');
+const downloadByUrl = (url, filename) => {
    const downloadLink = document.createElement('a');
-   downloadLink.href = downloadUrl;
+   downloadLink.href = url;
    downloadLink.download = filename;
    downloadLink.target = '_blank';
    downloadLink.click();
    downloadLink.remove();
-   DOMURL.revokeObjectURL(downloadUrl);
+   DOMURL.revokeObjectURL(url);
+};
+
+const downloadCanvas = (canvas, filename) => {
+   const downloadUrl = canvas.toDataURL('image/png');
+   downloadByUrl(downloadUrl, filename);
    return Promise.resolve(canvas);
 };
 
@@ -149,6 +153,7 @@ const domprocess = {
    clipImageToCanvas,
    createCanvas,
    dataUrlToImage,
+   downloadByUrl,
    downloadCanvas,
    getStyle,
    isTransparent,

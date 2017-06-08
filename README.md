@@ -37,7 +37,7 @@ angular.module("app", ["angular-screenshot"])
 | target      	  | element.children()  | Use target element with capture section. | `<screenshot target="root"><screenshot>` |
 | isOpen      	  | false      		   | Flag indicating that open the capture canvas. | `<screenshot target="{{::'#root'}}" isOpen="appCtrl.isOpen"><screenshot>` |
 | toolboxOptions | {"filename": "screenshot.png", "cancelText": "cancel", "downloadText": "download"} | options of screenshot toolbox | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolboxOptions"><screenshot>` |
-| api 			  | {"download": download, "cancel": cancel} | Expose api to interactive custom template action. | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"><screenshot>` |
+| api 			  | {"download": download, "cancel": cancel, "downloadFull: downloadFull"} | Expose api to interactive custom template action. | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"><screenshot>` |
 
 
 ## Basic Usage
@@ -119,6 +119,37 @@ Use `screenshot-toolbox` to customize your toolbox, then use expose api to inter
 		}
 })();
 ```
+
+ Use screenshot as element or attribute, then use expose api to download full dom content
+ ```html
+ <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen">
+	<i ng-if="!appCtrl.isFullOpen" class="material-icons">crop</i>
+	<i ng-if="appCtrl.isFullOpen" class="material-icons">close</i>
+</button>
+	<button class="btn btn-fab" ng-if="appCtrl.isFullOpen" ng-click="appCtrl.downloadFull()">
+	<i class="material-icons">file_download</i>
+</button>
+	<!--screenshot-->
+<screenshot is-open="appCtrl.isFullOpen"api="appCtrl.fullScreenApi" >
+	<div class="panel-body">
+	...
+	</div>
+</screenshot>
+ ```
+ ```javascript
+'use strict';
+(function () {
+angular.module('app', ['angular-screenshot'])
+	.controller('AppController', ['$scope', appController])
+	function appController() {
+		var self = this;
+		self.fullScreenApi;
+		self.downloadFull = downloadFull;
+	function downloadFull() {
+		if (self.fullScreenApi) self.fullScreenApi.downloadFull();
+	}
+})();
+ ```
 
 ## Development scripts
 * `npm run dev`: webpack lite server auto reload on changed.

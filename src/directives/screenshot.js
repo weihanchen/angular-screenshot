@@ -5,7 +5,7 @@ import {
 import domtoimage from 'dom-to-image';
 const screenshot = () => {
    const screenshotController = function ($scope, $element, $compile, $timeout, $window) {
-      const colors = {gray: '#898b89', lightGray: '#e6e3e3'},
+      const colors = { gray: '#898b89', lightGray: '#e6e3e3' },
          hightLevelZindex = {
             top: 1,
             second: 0
@@ -55,6 +55,18 @@ const screenshot = () => {
          //     .then(domprocess.canvasToImage)
          //     .then(image => domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h))
          //     .then(canvas => domprocess.downloadCanvas(canvas, self.filename));
+      };
+
+      const downloadFull = () => {
+         self.isOpen = false;
+         $timeout(() => {
+            const elementSelector = getElementSelector();
+            const element = elementSelector[0];
+            const options = getOptions(element);
+            domtoimage.toPng(element, options)
+               .then(imageUrl => domprocess.downloadByUrl(imageUrl, self.filename))
+               .catch(error => console.error(error));
+         });
       };
 
       const findMaxZindex = () => {
@@ -186,8 +198,9 @@ const screenshot = () => {
          '</div>';
       self.templateScope = $scope;
       $timeout(() => self.api = {
+         cancel: cancel,
          download: download,
-         cancel: cancel
+         downloadFull: downloadFull
       });
 
       $scope.$watch(() => self.isOpen, (newVal) => {
@@ -234,6 +247,6 @@ const screenshot = () => {
  *    cancelText: 'Cancel',
  *    downloadText: 'Download'
  * }] toolboxOptions
- * @param {object=} [api={download, cancel}] Expose api to interactive custom template action.
+ * @param {object=} [api={download, cancel, downloadFull}] Expose api to interactive custom template action.
  */
 export default screenshot;

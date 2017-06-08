@@ -65,7 +65,6 @@ describe('screenshot directive', function () {
    const getChildSelector = (element, childName) => element.find(childName);
 
    const triggerResize = () => {
-       console.log('trigger')
       const event = document.createEvent('HTMLEvents');
       event.initEvent('resize', true, false);
       document.body.dispatchEvent(event);

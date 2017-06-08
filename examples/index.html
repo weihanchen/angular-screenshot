@@ -120,8 +120,9 @@
                             <pre>
                                 <code class="javascript">
                                     {
+                                        "cancel": cancel,
                                         "download": download,
-                                        "cancel": cancel
+                                        "downloadFull": downloadFull
                                     }
                                 </code>
                             </pre>
@@ -281,6 +282,61 @@
                     </div>
                 </screenshot>
             </div>
+
+             <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen">
+                            <i ng-if="!appCtrl.isFullOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isFullOpen" class="material-icons">close</i>
+                        </button>
+                        <button class="btn btn-fab" ng-if="appCtrl.isFullOpen" ng-click="appCtrl.downloadFull()">
+                            <i class="material-icons">file_download</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use expose api to download full dom content
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isFullOpen" api="appCtrl.fullScreenApi">
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen"&gt
+                                    &lti ng-if="!appCtrl.isFullOpen" class="material-icons"&gtcrop&lt/i&gt
+                                    &lti ng-if="appCtrl.isFullOpen" class="material-icons"&gtclose&lt/i&gt
+                                &lt/button&gt
+                                &ltbutton class="btn btn-fab" ng-if="appCtrl.isFullOpen" ng-click="appCtrl.downloadFull()"&gt
+                                    &lti class="material-icons"&gtfile_download&lt/i&gt
+                                &lt/button&gt
+                                &lt!--screenshot--&gt
+                                &ltscreenshot is-open="appCtrl.isFullOpen"api="appCtrl.fullScreenApi" &gt
+                                    &ltdiv class="panel-body"&gt
+                                        ...
+                                    &lt/div&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.fullScreenApi;
+                                      self.downloadFull = downloadFull;
+                                      function downloadFull() {
+                                          if (self.fullScreenApi) self.fullScreenApi.downloadFull();
+                                       }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
+            
             <h3>Todo</h3>
             <div class="well">
                 <ul>

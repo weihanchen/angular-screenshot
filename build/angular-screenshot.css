@@ -16,7 +16,6 @@
 	box-shadow: 0 0.1em 0.2em #4f4f4f;
 	background-color: #e6e3e3;
 	color: #4f4f4f;
-	-webkit-transition: background-color .3s;
 	transition: background-color .3s;
 }
 .screenshot-toolbox .btn:hover,
@@ -42,7 +41,6 @@
 .screenshot-toolbox .btn:active:before {
 	width: 120%;
 	padding-top: 120%;
-	-webkit-transition: width .2s ease-out, padding-top .2s ease-out;
 	transition: width .2s ease-out, padding-top .2s ease-out;
 }
 .screenshot-toolbox .btn-navy {

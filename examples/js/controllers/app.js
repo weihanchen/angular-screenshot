@@ -9,6 +9,7 @@
       self.advanceApi;
       self.cancel = cancel;
       self.download = download;
+      self.downloadFull = downloadFull;
       self.isOpenScreenshot = false;
       self.openScreenshot = openScreenshot;
       self.target1Options = {
@@ -24,6 +25,11 @@
 
       function download() {
          if (self.advanceApi) self.advanceApi.download();
+      }
+
+      function downloadFull() {
+         console.log(self.fullScreenApi)
+         if (self.fullScreenApi) self.fullScreenApi.downloadFull();
       }
 
       function openScreenshot() {
