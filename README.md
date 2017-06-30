@@ -151,6 +151,42 @@ angular.module('app', ['angular-screenshot'])
 })();
  ```
 
+ Use screenshot as element or attribute, then use expose api to send image data to backend api.
+ ```html
+<button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isUrlOpen]" ng-click="appCtrl.isUrlOpen = !appCtrl.isUrlOpen">
+	<i ng-if="!appCtrl.isUrlOpen" class="material-icons">crop</i>
+	<i ng-if="appCtrl.isUrlOpen" class="material-icons">close</i>
+</button>
+<screenshot is-open="appCtrl.isUrlOpen" api="appCtrl.imageApi">
+	<screenshot-toolbox>
+		<div class="btn-group-sm">
+			<button class="btn btn-success" ng-click="appCtrl.sendImage()">
+				sendImage
+			</button>
+		</div>
+	</screenshot-toolbox>
+</screenshot>
+ ```
+```javascript
+'use strict';
+(function () {
+	angular.module('app', ['angular-screenshot'])
+		.controller('AppController', ['$scope', appController])
+		function appController() {
+			var self = this;
+			self.imageApi;
+			self.sendImage = sendImage;
+			function sendImage() {
+				if (self.imageApi) {
+					self.imageApi.toPng(function (dataUrl) {
+						console.log(dataUrl);
+						//you can post dataUrl to your backend api, then do more feature like send mail...
+					});
+				}
+			}
+		}
+})();
+```
 ## Development scripts
 * `npm run dev`: webpack lite server auto reload on changed.
 * `npm run build`: generate built files and minified ones.

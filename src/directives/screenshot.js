@@ -104,6 +104,31 @@ const screenshot = () => {
          hightLevelZindex.second = maxZindex + 1;
          hightLevelZindex.top = hightLevelZindex.second + 1;
       };
+
+      const toPng = (callback) => new Promise((resolve, reject) => {
+         self.isOpen = false;
+         $timeout(() => {
+            const elementSelector = getElementSelector();
+            const element = elementSelector[0];
+            const options = getOptions(element);
+            return domtoimage.toPng(element, options)
+               .then(domprocess.dataUrlToImage)
+               .then(image => {
+                  domprocess.remove(image);
+                  return domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
+               })
+               .then(canvas => {
+                  const url = canvas.toDataURL('image/png');
+                  if (callback) callback(url);
+                  resolve(url);
+               })
+               .catch(error => {
+                  console.error(error);
+                  reject(error);
+               });
+         });
+      });
+
       const canvasMousedownListener = () => {
          domprocess.remove(self.toolboxElement);
       };
@@ -200,7 +225,8 @@ const screenshot = () => {
       $timeout(() => self.api = {
          cancel: cancel,
          download: download,
-         downloadFull: downloadFull
+         downloadFull: downloadFull,
+         toPng: toPng
       });
 
       $scope.$watch(() => self.isOpen, (newVal) => {

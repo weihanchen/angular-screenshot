@@ -3518,6 +3518,29 @@ var screenshot = function screenshot() {
          hightLevelZindex.second = maxZindex + 1;
          hightLevelZindex.top = hightLevelZindex.second + 1;
       };
+
+      var toPng = function toPng(callback) {
+         return new Promise(function (resolve, reject) {
+            self.isOpen = false;
+            $timeout(function () {
+               var elementSelector = getElementSelector();
+               var element = elementSelector[0];
+               var options = getOptions(element);
+               return _domToImage2.default.toPng(element, options).then(_utils.domprocess.dataUrlToImage).then(function (image) {
+                  _utils.domprocess.remove(image);
+                  return _utils.domprocess.clipImageToCanvas(image, self.rect.startX, self.rect.startY, self.rect.w, self.rect.h);
+               }).then(function (canvas) {
+                  var url = canvas.toDataURL('image/png');
+                  if (callback) callback(url);
+                  resolve(url);
+               }).catch(function (error) {
+                  console.error(error);
+                  reject(error);
+               });
+            });
+         });
+      };
+
       var canvasMousedownListener = function canvasMousedownListener() {
          _utils.domprocess.remove(self.toolboxElement);
       };
@@ -3612,7 +3635,8 @@ var screenshot = function screenshot() {
          return self.api = {
             cancel: cancel,
             download: download,
-            downloadFull: downloadFull
+            downloadFull: downloadFull,
+            toPng: toPng
          };
       });
 
