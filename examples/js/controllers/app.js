@@ -28,7 +28,6 @@
       }
 
       function downloadFull() {
-         console.log(self.fullScreenApi)
          if (self.fullScreenApi) self.fullScreenApi.downloadFull();
       }
 
