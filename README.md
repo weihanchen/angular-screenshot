@@ -37,7 +37,7 @@ angular.module("app", ["angular-screenshot"])
 | target      	  | element.children()  | Use target element with capture section. | `<screenshot target="root"><screenshot>` |
 | isOpen      	  | false      		   | Flag indicating that open the capture canvas. | `<screenshot target="{{::'#root'}}" isOpen="appCtrl.isOpen"><screenshot>` |
 | toolboxOptions | {"filename": "screenshot.png", "cancelText": "cancel", "downloadText": "download"} | options of screenshot toolbox | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolboxOptions"><screenshot>` |
-| api 			  | {"download": download, "cancel": cancel, "downloadFull: downloadFull"} | Expose api to interactive custom template action. | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"><screenshot>` |
+| api 			  | {"download": download, "cancel": cancel, "downloadFull": downloadFull, "toPng": toPng} | Expose api to interactive custom template action. | `<screenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"><screenshot>` |
 
 
 ## Basic Usage
