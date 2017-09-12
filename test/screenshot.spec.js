@@ -354,7 +354,8 @@ describe('screenshot directive', function () {
    describe('custom toolbox template', () => {
       const customTlBtnText = {
          cancel: 'cancel me!',
-         download: 'download me!'
+         download: 'download me!',
+         toPng: 'toPng'
       };
       let elementSelector,
          scope,
@@ -367,6 +368,7 @@ describe('screenshot directive', function () {
             <screenshot-toolbox>
                <button ng-click="downloadMe()">${customTlBtnText.download}</button>
                <button ng-click="cancelMe()">${customTlBtnText.cancel}</button>
+               <button ng-click="toPng()">${customTlBtnText.toPng}</button>
             </screenshot-toolbox>
             <div>Hello World!</div>
          </screenshot>`);
@@ -378,6 +380,10 @@ describe('screenshot directive', function () {
          };
          scope.cancelMe = () => {
             scope.api.cancel();
+         };
+         scope.toPng = () => {
+            scope.api.toPng();
+
          };
          body = angular.element(document.body);
          body.css({ width: 500, height: 500 });
@@ -451,6 +457,54 @@ describe('screenshot directive', function () {
                const toolboxSelector = getChildSelector(body, toolboxClass);
                const downloadSelector = toolboxSelector.find(`button:contains(${customTlBtnText.download})`);
                return downloadSelector.click();
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
+      });
+
+      it('should trigger the downloadFull event', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => scope.api.downloadFull())
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               expect(toolboxSelector.length).toEqual(0);
+               done();
+            });
+      });
+
+      it('should trigger the toPng event on custom toolbox', (done) => {
+         //Arrange
+         scope.isOpen = true;
+         //Act/Assert
+         scope.$digest();
+         waitFor()
+            .then(() => {
+               const canvasSelector = getChildSelector(body, 'canvas');
+               return dragLeftTopToRightBottom(canvasSelector);
+            })
+            .then(() => $timeout.flush())
+            .then(() => waitFor())
+            .then(() => {
+               const toolboxSelector = getChildSelector(body, toolboxClass);
+               const toPngSelector = toolboxSelector.find(`button:contains(${customTlBtnText.toPng})`);
+               return toPngSelector.click();
             })
             .then(() => $timeout.flush())
             .then(() => waitFor())
