@@ -5,10 +5,16 @@ before_script:
   - npm install
 script:
   - npm run build
+
 deploy:
-  provider: script
+  provider: pages
   skip_cleanup: true
-  script: bash scripts/deploy.sh
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master
+  local_dir: examples
+  email: $GITHUB_MAIL
+
 branches:
   only:
     - master
