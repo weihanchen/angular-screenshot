@@ -6,7 +6,7 @@
   ],
   "description": "Angular screenshot in directive for screen capture.",
   "main": [
-    "dist/angular-screenshot.min.js"
+    "build/angular-screenshot.min.js"
   ],
   "keywords": [
     "screenshot",
