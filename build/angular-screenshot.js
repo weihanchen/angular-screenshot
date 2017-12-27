@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.4.0 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.4.1 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -3688,7 +3688,7 @@ var screenshot = function screenshot() {
  *    cancelText: 'Cancel',
  *    downloadText: 'Download'
  * }] toolboxOptions
- * @param {object=} [api={download, cancel, downloadFull}] Expose api to interactive custom template action.
+ * @param {object=} [api={download, cancel, downloadFull, toPng}] Expose api to interactive custom template action.
  */
 exports.default = screenshot;
 
