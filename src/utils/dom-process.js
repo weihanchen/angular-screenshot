@@ -142,7 +142,7 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
    canvas.addEventListener('touchend', touched, false);
    canvas.addEventListener('touchmove', touchMove, false);
    canvas.addEventListener('contextmenu', contextmenu, false);
-
+   document.body.addEventListener('touchmove', (event) => event.preventDefault(), false);
    return Promise.resolve(canvas);
 };
 
