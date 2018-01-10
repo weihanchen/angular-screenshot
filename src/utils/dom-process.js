@@ -111,10 +111,38 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
       e.preventDefault();
       return false;
    };
+
+   const touchStart = (e) => {
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent("mousedown", {
+         pageX: touch.pageX,
+         pageY: touch.pageY
+      });
+      canvas.dispatchEvent(mouseEvent);
+   };
+
+   const touched = () => {
+      const mouseEvent = new MouseEvent("mouseup", {});
+      canvas.dispatchEvent(mouseEvent);
+   };
+
+   const touchMove = (e) => {
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent("mousemove", {
+         pageX: touch.pageX,
+         pageY: touch.pageY
+      });
+      canvas.dispatchEvent(mouseEvent);
+   };
+
    canvas.addEventListener('mousedown', mousedown, false);
    canvas.addEventListener('mouseup', mouseup, false);
    canvas.addEventListener('mousemove', mousemove, false);
+   canvas.addEventListener('touchstart', touchStart, false);
+   canvas.addEventListener('touchend', touched, false);
+   canvas.addEventListener('touchmove', touchMove, false);
    canvas.addEventListener('contextmenu', contextmenu, false);
+
    return Promise.resolve(canvas);
 };
 
