@@ -113,7 +113,8 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
    };
 
    const touchStart = (e) => {
-      const touch = e.touches[0];
+      e.preventDefault();
+      const touch = e.changedTouches[0];
       const mouseEvent = new MouseEvent("mousedown", {
          pageX: touch.pageX,
          pageY: touch.pageY
@@ -127,7 +128,8 @@ const listenInteractiveCanvas = (canvas, rectBackground, mouseupListener, moused
    };
 
    const touchMove = (e) => {
-      const touch = e.touches[0];
+      e.preventDefault();
+      const touch = e.changedTouches[0];
       const mouseEvent = new MouseEvent("mousemove", {
          pageX: touch.pageX,
          pageY: touch.pageY
