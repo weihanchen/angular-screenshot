@@ -42,7 +42,7 @@ angular.module("app", ["angular-screenshot"])
 
 ## Basic Usage
 
-Use screenshot as element or attribute, then use default template and cover children elements default
+### Use screenshot as element or attribute, then use default template and cover children elements default
 ```html
 <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isBasicOpen]" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen">
 	<i ng-if="!appCtrl.isBasicOpen" class="material-icons">crop</i>
@@ -56,7 +56,7 @@ Use screenshot as element or attribute, then use default template and cover chil
 </screenshot>
 ```
 
-Use target parameter to set screenshot section on element
+### Use target parameter to set screenshot section on element
 ```html
 <div id="target1" class="panel panel-info">
 	...
@@ -83,7 +83,7 @@ angular.module('app', ['angular-screenshot'])
 ```
 
 ## Advanced usage
-Use `screenshot-toolbox` to customize your toolbox, then use expose api to interactive with directive.
+### Use `screenshot-toolbox` to customize your toolbox, then use expose api to interactive with directive.
 ```html
 <screenshot is-open="appCtrl.isAdvanceOpen" api="appCtrl.advanceApi">
 	<screenshot-toolbox>
@@ -120,7 +120,7 @@ Use `screenshot-toolbox` to customize your toolbox, then use expose api to inter
 })();
 ```
 
- Use screenshot as element or attribute, then use expose api to download full dom content
+ ### Use screenshot as element or attribute, then use expose api to download full dom content
  ```html
  <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen">
 	<i ng-if="!appCtrl.isFullOpen" class="material-icons">crop</i>
@@ -151,7 +151,7 @@ angular.module('app', ['angular-screenshot'])
 })();
  ```
 
- Use screenshot as element or attribute, then use expose api to send image data to backend api.
+ ### Use screenshot as element or attribute, then use expose api to send image data to backend api.
  ```html
 <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isUrlOpen]" ng-click="appCtrl.isUrlOpen = !appCtrl.isUrlOpen">
 	<i ng-if="!appCtrl.isUrlOpen" class="material-icons">crop</i>
@@ -187,6 +187,68 @@ angular.module('app', ['angular-screenshot'])
 		}
 })();
 ```
+
+### Use screenshot as element or attribute, then use expose api to print.
+ ```html
+<button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isUrlOpen]" ng-click="appCtrl.isPrintOpen = !appCtrl.isPrintOpen">
+	<i ng-if="!appCtrl.isPrintOpen" class="material-icons">crop</i>
+	<i ng-if="appCtrl.isPrintOpen" class="material-icons">close</i>
+</button>
+<screenshot is-open="appCtrl.isPrintOpen" api="appCtrl.printApi">
+	<screenshot-toolbox>
+		<div class="btn-group-sm">
+			<button class="btn btn-success" ng-click="appCtrl.print()">
+				Print
+			</button>
+		</div>
+	</screenshot-toolbox>
+</screenshot>
+ ```
+```javascript
+'use strict';
+(function () {
+	angular.module('app', ['angular-screenshot'])
+		.controller('AppController', ['$scope', appController])
+		function appController() {
+			var self = this;
+			self.printApi;
+			self.print = print;
+			function print() {
+				if (self.printApi) {
+					self.printApi.toPng(function (dataUrl) {
+						  let windowContent = '';
+						  windowContent += '';
+						  windowContent += '';
+						  windowContent += '';
+						  windowContent += '<img src="' + dataUrl + '">';
+						  windowContent += '';
+						  windowContent += '';
+                                            
+						  const printWin = window.open(
+						      '',
+						      '',
+						      'width=' + 1000 + ',height=' + 1000
+						  );
+						  printWin.document.open();
+						  printWin.document.write(windowContent);
+                                            
+						  printWin.document.addEventListener(
+						      'load',
+						      function() {
+						      printWin.focus();
+						      printWin.print();
+						      printWin.document.close();
+						      printWin.close();
+						      },
+						      true
+						  );
+					});
+				}
+			}
+		}
+})();
+```
+
 ## Development scripts
 * `npm run dev`: webpack lite server auto reload on changed.
 * `npm run build`: generate built files and minified ones.

@@ -402,6 +402,95 @@
                     </div>
                 </screenshot>
             </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isPrintOpen]" ng-click="appCtrl.isPrintOpen = !appCtrl.isPrintOpen">
+                            <i ng-if="!appCtrl.isPrintOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isPrintOpen" class="material-icons">close</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use expose api to print.
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isPrintOpen" api="appCtrl.printApi">
+                    <screenshot-toolbox>
+                        <div class="btn-group-sm">
+                            <button class="btn btn-success" ng-click="appCtrl.print()">
+                                Print
+                            </button>
+                        </div>
+                    </screenshot-toolbox>
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isPrintOpen]" ng-click="appCtrl.isPrintOpen = !appCtrl.isPrintOpen"&gt
+                                    &lti ng-if="!appCtrl.isPrintOpen" class="material-icons"&gtcrop&lt/i&gt
+                                    &lti ng-if="appCtrl.isPrintOpen" class="material-icons"&gtclose&lt/i&gt
+                                &lt/button&gt
+
+                                &ltscreenshot is-open="appCtrl.isPrintOpen" api="appCtrl.printApi"&gt
+                                    &ltscreenshot-toolbox&gt
+                                        &ltdiv class="btn-group-sm"&gt
+                                            &ltbutton class="btn btn-success" ng-click="appCtrl.print()"&gt
+                                                Print
+                                            &lt/button&gt
+                                        &lt/div&gt
+                                    &lt/screenshot-toolbox&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.printApi;
+                                      self.print = print;
+                                      function print() {
+                                           if (self.printApi) {
+                                                self.printApi.toPng(function (dataUrl) {
+                                                    let windowContent = '<!DOCTYPE html>';
+                                                    windowContent += '<html>';
+                                                    windowContent += '<head><title>Print canvas</title></head>';
+                                                    windowContent += '<body>';
+                                                    windowContent += '&ltimg src="' + dataUrl + '"&gt';
+                                                    windowContent += '</body>';
+                                                    windowContent += '</html>';
+                                            
+                                                    const printWin = window.open(
+                                                        '',
+                                                        '',
+                                                        'width=' + 1000 + ',height=' + 1000
+                                                    );
+                                                    printWin.document.open();
+                                                    printWin.document.write(windowContent);
+                                            
+                                                    printWin.document.addEventListener(
+                                                        'load',
+                                                        function() {
+                                                        printWin.focus();
+                                                        printWin.print();
+                                                        printWin.document.close();
+                                                        printWin.close();
+                                                        },
+                                                        true
+                                                    );
+                                                });
+                                            }
+                                       }
+                                   }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
             
             <h3>Todo</h3>
             <div class="well">

@@ -1,4 +1,4 @@
-/*! Angular Screenshot - v0.4.1 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
+/*! Angular Screenshot - v0.4.2 - http://weihanchen.github.io/angular-screenshot - (c) 2017 weihanchen - MIT */
 /* shared */
 /* components */
 .screenshot-toolbox {
@@ -35,7 +35,6 @@
 	padding-top: 0;
 	border-radius: 100%;
 	background-color: rgba(205, 204, 204, .3);
-	-webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
 .screenshot-toolbox .btn:active:before {
