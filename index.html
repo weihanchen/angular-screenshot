@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/plugins/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/plugins/angular-screenshot.min.css" />
+    <link rel="stylesheet" href="css/plugins/default.css" />
+    <link rel="stylesheet" href="css/plugins/bootstrap-material-design.min.css" />
+    <link rel="stylesheet" href="css/plugins/ripples.min.css" />
+    <link rel="stylesheet" href="css/plugins/font-awesome.min.css" />
+    <script src="js/plugins/jquery.min.js"></script>
+    <script src="js/plugins/angular.min.js"></script>
+    <script src="js/plugins/bootstrap.min.js"></script>
+    <script src="js/controllers/app.js"></script>
+    <script src="js/plugins/angular-screenshot.js"></script>
+    <script src="js/plugins/highlight.pack.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</head>
+
+<body ng-controller="AppController as appCtrl">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="jumbotron">
+                <h1>Angular screenshot</h1>
+                <p>Angular screenshot is an Angularjs directive for screen capture.</p>
+                <p>
+                    <a class="btn btn-primary btn-raised" href="https://github.com/weihanchen/angular-screenshot" target="_blank"><i class="fa fa-github" aria-hidden="true"></i> View on github</a>
+                    <a class="btn btn-primary btn-raised" href="https://github.com/weihanchen/angular-screenshot/archive/master.zip" target="_blank"><i class="fa fa-cloud-download" aria-hidden="true"></i> Download zip</a>
+                </p>
+            </div>
+            <h2>Installation</h2>
+            <hr /> Get angular screenshot from bower, npm, or git.
+            <pre>
+                <code class="bash">
+                    $npm install angular-screenshot
+                    $bower install angular-screenshot
+                    $git clone https://github.com/weihanchen/angular-screenshot.git
+                </code>
+            </pre> Add dependencies to the section of your index.html
+            <pre>
+                <code class="html">
+                    &ltmeta charset="utf-8"&gt  
+                    &ltlink href="node_modules/angular-screenshot/build/angular-screenshot.min.css" rel="stylesheet" /&gt
+                    &ltscript src="node_modules/jquery/dist/jquery.min.js"&gt&lt/script&gt
+                    &ltscript src="node_modules/angular/angular.min.js"&gt&lt/script&gt
+                    &ltscript src="node_modules/angular-screenshot/build/angular-screenshot.min.js"&gt&lt/script&gt
+                </code>
+            </pre> Add angular-screenshot dependency to module:
+            <pre>
+                <code class="javascript">
+                    angular.module("app", ["angular-screenshot"])
+                </code>
+            </pre>
+            Basic usage, is-open parameter to controll screenshot open/close.
+            <pre>
+                <code class="html">
+                    &ltscreenshot is-open="appCtrl.isOpen"&gt
+                        ....some child elements here.
+                    &lt/screenshot&gt
+                </code>
+            </pre>
+            <!--options-->
+            <p></p>
+            <h2>Options</h2>
+            <span class="text-warning">Close screenshot default listening right click event to close, you can add key event listener to close screenshot with some key.</span>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                        <th>Sample</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>target</td>
+                        <td>element.children()</td>
+                        <td>Use target element with capture section.</td>
+                        <td>
+                            &ltscreenshot target="root"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>isOpen</td>
+                        <td>false</td>
+                        <td>Flag indicating that open the capture canvas.</td>
+                        <td>
+                            &ltscreenshot target="{<span>{::'#root'}</span>}" isOpen="appCtrl.isOpen"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>toolboxOptions</td>
+                        <td>
+                            <pre>
+                               <code class="javascript">
+                                    {
+                                "filename": "screenshot.png", 
+                                "cancelText": "Cancel",
+                                "downloadText": "Download"
+                            }
+                               </code>
+                            </pre>
+                        </td>
+                        <td>options of screenshot toolbox</td>
+                        <td>
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolboxOptions"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>api</td>
+                        <td>
+                            <pre>
+                                <code class="javascript">
+                                    {
+                                        "cancel": cancel,
+                                        "download": download,
+                                        "downloadFull": downloadFull,
+                                        "toPng": toPng
+                                    }
+                                </code>
+                            </pre>
+                        </td>
+                        <td>
+                            Expose api to interactive custom template action.
+                        </td>
+                        <td>
+                            &ltscreenshot target="root" isOpen="appCtrl.isOpen" toolbox-options="appCtrl.toolbarOptions" api="appCtrl.api"&gt&ltscreenshot&gt
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--examples-->
+            <h2>Examples</h2>
+            <h3>Basic</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isBasicOpen]" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen">
+                            <i ng-if="!appCtrl.isBasicOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isBasicOpen" class="material-icons">close</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use default template and cover children elements default
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isBasicOpen">
+                    <div class="panel-body">
+                        <pre>
+                        <code class="html">
+                            &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isBasicOpen]" ng-click="appCtrl.isBasicOpen = !appCtrl.isBasicOpen"&gt
+                                &lti ng-if="!appCtrl.isBasicOpen" class="material-icons"&gtcrop&lt/i&gt
+                                &lti ng-if="appCtrl.isBasicOpen" class="material-icons"&gtclose&lt/i&gt
+                            &lt/button&gt
+                            &lt!--screenshot--&gt
+                            &ltscreenshot is-open="appCtrl.isBasicOpen"&gt
+                                &ltdiv class="panel-body"&gt
+                                    ...
+                                &lt/div&gt
+                            &lt/screenshot&gt
+                        </code>
+                    </pre>
+                    </div>
+                </screenshot>
+            </div>
+            <div id="target1" class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab btn-default" ng-click="appCtrl.target1Open = !appCtrl.target1Open">
+                           <i class="material-icons">crop</i>
+                       </button>
+                    </div>
+                    <h4>
+                        Use target to set screenshot section on element children, and use some custom options
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <screenshot target="{{::'#target1'}}" is-open="appCtrl.target1Open" toolbox-options="appCtrl.target1Options"></screenshot>
+                    View:
+                    <pre>
+                        <code class="html">
+                            &ltdiv id="target1" class="panel panel-info"&gt
+                                ...
+                                &ltdiv class="panel-body"&gt
+                                    &ltscreenshot target="<span>{</span>{::'#target1'}<span>}</span>" is-open="appCtrl.target1Open" toolbox-options="appCtrl.target1Options"&gt&lt/screenshot&gt
+                                    ...
+                                &lt/div&gt
+                            &lt/div&gt
+                        </code>
+                    </pre> Controller:
+                    <pre>
+                        <code class="javascript">
+                            'use strict';
+                            (function () {
+                                angular.module('app', ['angular-screenshot'])
+                                    .controller('AppController', ['$scope', appController]);
+                                function appController($scope) {
+                                    var self = this;
+                                    self.target1Options = {
+                                        filename: 'target1.png',
+                                        downloadText: 'Download me',
+                                        cancelText: 'Close it!'
+                                    };
+                                }
+                            })()
+                        </code>
+                    </pre>
+                </div>
+            </div>
+            <h3>Advance usage</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab btn-default" ng-click="appCtrl.isAdvanceOpen = !appCtrl.isAdvanceOpen">
+                            <i ng-if="!appCtrl.isAdvanceOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isAdvanceOpen" class="material-icons">close</i>
+                       </button>
+                    </div>
+                    <h4>
+                        Use <span class="text-warning">screenshot-toolbox</span> to customize your toolbox template, then use expose api to interactive with directive.
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isAdvanceOpen" api="appCtrl.advanceApi">
+                    <screenshot-toolbox>
+                        <div class="btn-group-sm">
+                            <button class="btn btn-default btn-fab" ng-click="appCtrl.cancel()">
+                                <i class="material-icons">close</i>
+                            </button>
+                            <button class="btn btn-success btn-fab" ng-click="appCtrl.download()">
+                                <i class="material-icons">check</i>
+                            </button>
+                        </div>
+                    </screenshot-toolbox>
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltscreenshot is-open="appCtrl.isAdvanceOpen" api="appCtrl.advanceApi"&gt
+                                    &ltscreenshot-toolbox&gt
+                                        &ltdiv class="btn-group-sm"&gt
+                                             &ltbutton class="btn btn-default btn-fab" ng-click="appCtrl.cancel()"&gt
+                                                 &lti class="material-icons"&gtclose&lt/i&gt
+                                             &lt/button&gt
+                                             &ltbutton class="btn btn-success btn-fab" ng-click="appCtrl.download()"&gt
+                                                 &lti class="material-icons"&gtcheck&lt/i&gt
+                                             &lt/button&gt
+                                        &lt/div&gt
+                                    &lt/screenshot-toolbox&gt
+                                    &ltdiv class="panel-body"&gt
+                                        ...
+                                    &lt/div&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        controller: 
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.advanceApi;
+                                      self.cancel = cancel;
+                                      self.download = download;
+                                      function cancel() {
+                                          if (self.advanceApi) self.advanceApi.cancel();
+                                       }
+                                       function download() {
+                                          if (self.advanceApi) self.advanceApi.download();
+                                       }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
+
+             <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen">
+                            <i ng-if="!appCtrl.isFullOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isFullOpen" class="material-icons">close</i>
+                        </button>
+                        <button class="btn btn-fab" ng-if="appCtrl.isFullOpen" ng-click="appCtrl.downloadFull()">
+                            <i class="material-icons">file_download</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use expose api to download full dom content
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isFullOpen" api="appCtrl.fullScreenApi">
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isFullOpen]" ng-click="appCtrl.isFullOpen = !appCtrl.isFullOpen"&gt
+                                    &lti ng-if="!appCtrl.isFullOpen" class="material-icons"&gtcrop&lt/i&gt
+                                    &lti ng-if="appCtrl.isFullOpen" class="material-icons"&gtclose&lt/i&gt
+                                &lt/button&gt
+                                &ltbutton class="btn btn-fab" ng-if="appCtrl.isFullOpen" ng-click="appCtrl.downloadFull()"&gt
+                                    &lti class="material-icons"&gtfile_download&lt/i&gt
+                                &lt/button&gt
+                                &lt!--screenshot--&gt
+                                &ltscreenshot is-open="appCtrl.isFullOpen"api="appCtrl.fullScreenApi" &gt
+                                    &ltdiv class="panel-body"&gt
+                                        ...
+                                    &lt/div&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.fullScreenApi;
+                                      self.downloadFull = downloadFull;
+                                      function downloadFull() {
+                                          if (self.fullScreenApi) self.fullScreenApi.downloadFull();
+                                       }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
+
+             <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isUrlOpen]" ng-click="appCtrl.isUrlOpen = !appCtrl.isUrlOpen">
+                            <i ng-if="!appCtrl.isUrlOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isUrlOpen" class="material-icons">close</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use expose api to send image data to backend api.
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isUrlOpen" api="appCtrl.imageApi">
+                    <screenshot-toolbox>
+                        <div class="btn-group-sm">
+                            <button class="btn btn-success" ng-click="appCtrl.sendImage()">
+                                sendImage
+                            </button>
+                        </div>
+                    </screenshot-toolbox>
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isUrlOpen]" ng-click="appCtrl.isUrlOpen = !appCtrl.isUrlOpen"&gt
+                                    &lti ng-if="!appCtrl.isUrlOpen" class="material-icons"&gtcrop&lt/i&gt
+                                    &lti ng-if="appCtrl.isUrlOpen" class="material-icons"&gtclose&lt/i&gt
+                                &lt/button&gt
+
+                                &ltscreenshot is-open="appCtrl.isUrlOpen" api="appCtrl.imageApi"&gt
+                                    &ltscreenshot-toolbox&gt
+                                        &ltdiv class="btn-group-sm"&gt
+                                            &ltbutton class="btn btn-success" ng-click="appCtrl.sendImage()"&gt
+                                                sendImage
+                                            &lt/button&gt
+                                        &lt/div&gt
+                                    &lt/screenshot-toolbox&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.imageApi;
+                                      self.sendImage = sendImage;
+                                      function sendImage() {
+                                           if (self.imageApi) {
+                                                self.imageApi.toPng(function (dataUrl) {
+                                                console.log(dataUrl);
+                                                alert('Please open console and print dataUrl then you can send dataUrl to your backend api do more feature like send mail.');
+                                                });
+                                            }
+                                       }
+                                   }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <div class="btn-group-sm pull-right">
+                        <button class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isPrintOpen]" ng-click="appCtrl.isPrintOpen = !appCtrl.isPrintOpen">
+                            <i ng-if="!appCtrl.isPrintOpen" class="material-icons">crop</i>
+                            <i ng-if="appCtrl.isPrintOpen" class="material-icons">close</i>
+                        </button>
+                    </div>
+                    <h4>
+                        Use screenshot as element or attribute, then use expose api to print.
+                    </h4>
+                </div>
+                <screenshot is-open="appCtrl.isPrintOpen" api="appCtrl.printApi">
+                    <screenshot-toolbox>
+                        <div class="btn-group-sm">
+                            <button class="btn btn-success" ng-click="appCtrl.print()">
+                                Print
+                            </button>
+                        </div>
+                    </screenshot-toolbox>
+                    <div class="panel-body">
+                        <pre>
+                            <code class="html">
+                                &ltbutton class="btn btn-fab" ng-class="{true: 'btn-danger', false: 'btn-default'}[appCtrl.isPrintOpen]" ng-click="appCtrl.isPrintOpen = !appCtrl.isPrintOpen"&gt
+                                    &lti ng-if="!appCtrl.isPrintOpen" class="material-icons"&gtcrop&lt/i&gt
+                                    &lti ng-if="appCtrl.isPrintOpen" class="material-icons"&gtclose&lt/i&gt
+                                &lt/button&gt
+
+                                &ltscreenshot is-open="appCtrl.isPrintOpen" api="appCtrl.printApi"&gt
+                                    &ltscreenshot-toolbox&gt
+                                        &ltdiv class="btn-group-sm"&gt
+                                            &ltbutton class="btn btn-success" ng-click="appCtrl.print()"&gt
+                                                Print
+                                            &lt/button&gt
+                                        &lt/div&gt
+                                    &lt/screenshot-toolbox&gt
+                                &lt/screenshot&gt
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="javascript">
+                                'use strict';
+                                (function () {
+                                   angular.module('app', ['angular-screenshot'])
+                                       .controller('AppController', ['$scope', appController])
+                                   function appController() {
+                                      var self = this;
+                                      self.printApi;
+                                      self.print = print;
+                                      function print() {
+                                           if (self.printApi) {
+                                                self.printApi.toPng(function (dataUrl) {
+                                                    let windowContent = '<!DOCTYPE html>';
+                                                    windowContent += '<html>';
+                                                    windowContent += '<head><title>Print canvas</title></head>';
+                                                    windowContent += '<body>';
+                                                    windowContent += '&ltimg src="' + dataUrl + '"&gt';
+                                                    windowContent += '</body>';
+                                                    windowContent += '</html>';
+                                            
+                                                    const printWin = window.open(
+                                                        '',
+                                                        '',
+                                                        'width=' + 1000 + ',height=' + 1000
+                                                    );
+                                                    printWin.document.open();
+                                                    printWin.document.write(windowContent);
+                                            
+                                                    printWin.document.addEventListener(
+                                                        'load',
+                                                        function() {
+                                                        printWin.focus();
+                                                        printWin.print();
+                                                        printWin.document.close();
+                                                        printWin.close();
+                                                        },
+                                                        true
+                                                    );
+                                                });
+                                            }
+                                       }
+                                   }
+                                })();
+                            </code>
+                        </pre>
+                    </div>
+                </screenshot>
+            </div>
+            
+            <h3>Todo</h3>
+            <div class="well">
+                <ul>
+                    <li><span class="text-warning"><strong>Capture with font can cause some problem, and this bug still trying fix.</strong></span></li>
+                    <li><span class="text-warning"><strong>RWD issue fix.</strong></span></li>
+                    <li><span class="text-warning"><strong>Add saveas feature.</strong></span></li>
+                </ul>
+            </div>
+            <h3>References</h3>
+            <div class="well">
+                <ul>
+                    <li><a href="https://github.com/tsayen/dom-to-image" target="_blank">dom-to-image</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
